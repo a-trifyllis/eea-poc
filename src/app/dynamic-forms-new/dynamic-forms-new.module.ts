@@ -5,6 +5,7 @@ import {CalendarModule} from 'primeng/calendar';
 import {ButtonModule} from 'primeng/button';
 import {ReactiveFormsModule} from '@angular/forms';
 import {DynamicFormComponent} from './dynamic-form/dynamic-form.component';
+import { DynamicFormConrolComponent } from './dynamic-form-conrol/dynamic-form-conrol.component';
 
 @NgModule({
     imports: [
@@ -16,7 +17,7 @@ import {DynamicFormComponent} from './dynamic-form/dynamic-form.component';
         MessagesModule,
         CalendarModule
     ],
-    declarations: [DynamicFormComponent]
+    declarations: [DynamicFormComponent, DynamicFormConrolComponent]
 })
 export class DynamicFormsNewModule {
 }
