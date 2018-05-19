@@ -13,7 +13,7 @@ export class ArrayControl extends BaseControl {
         super(options);
 
         this.arrayControls = options.arrayControls;
-        this.unrenderedControls = options.unrenderedControls;
+        this.unrenderedControls = options.unrenderedControls || [];
         this.arrayValidators = options.arrayValidators;
     }
 

@@ -14,7 +14,7 @@ import {DebugElement} from '@angular/core';
 import {By} from '@angular/platform-browser';
 import {ArrayControl} from '../controls/array-control';
 
-fdescribe('DynamicFormComponent', () => {
+describe('DynamicFormComponent', () => {
     let component: DynamicFormComponent;
     let fixture: ComponentFixture<DynamicFormComponent>;
 

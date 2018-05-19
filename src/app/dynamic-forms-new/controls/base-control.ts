@@ -30,7 +30,7 @@ export class BaseControl {
         if (!options.key) {
             throw Error('[key] is a mandatory field for a control');
         }
-        if (options.validators && (this.controlType === ControlType.GROUP || ControlType.ARRAY)) {
+        if (options.validators && (this.controlType === ControlType.GROUP || this.controlType === ControlType.ARRAY)) {
             throw Error('[validators] not allowed here! Please provide [groupValidators] or [arrayValidators]');
         }
         this.value = options.value;

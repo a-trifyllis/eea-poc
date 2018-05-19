@@ -14,7 +14,7 @@ export class GroupControl extends BaseControl {
         super(options);
 
         this.groupControls = options.groupControls;
-        this.unrenderedControls = options.unrenderedControls;
+        this.unrenderedControls = options.unrenderedControls || [];
         this.groupValidators = options.groupValidators;
         this.controlsPerRow = options.controlsPerRow === undefined ? 1 : options.controlsPerRow;
     }

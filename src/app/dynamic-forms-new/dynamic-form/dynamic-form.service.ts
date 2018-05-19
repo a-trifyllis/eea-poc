@@ -11,17 +11,19 @@ export class DynamicFormService {
     constructor() {
     }
 
-    toFormGroup(groupControl: GroupControl, parent?: FormGroup | FormArray, nameInParent?: string) {
+    toFormGroup(groupControl: GroupControl, parent?: FormGroup | FormArray): FormGroup {
         const newGroup: any = {};
 
         groupControl.groupControls
             .concat(groupControl.unrenderedControls)
-            .forEach(control => newGroup[control.key] = this.createControl(control));
+            .forEach(control => {
+                newGroup[control.key] = this.createControl(control);
+            });
 
         const newFormGroup = new FormGroup(newGroup, groupControl.groupValidators);
 
         if (parent) {
-            this.addToParent(parent, newFormGroup, nameInParent);
+            this.addToParent(parent, newFormGroup, groupControl.key);
         }
 
         return newFormGroup;
