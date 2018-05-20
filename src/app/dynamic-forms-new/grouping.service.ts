@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
-import {BaseControl, ControlType} from '../dynamic-forms/controls/base-control';
+import {BaseControl, ControlType} from './controls/base-control';
+import {GroupControl} from './controls/group-control';
 
 @Injectable()
 export class GroupingService {
@@ -11,16 +12,16 @@ export class GroupingService {
      * Groups controls in rows (for the desired number of elements per row) and also takes care to group separately
      * in case the control is a GROUP or ARRAY
      *
-     * @param {BaseControl<string>[]} controls
+     * @param {BaseControl[]} controls
      * @param {number} controlsPerRow
-     * @returns {BaseControl<string>[][]}
+     * @returns {BaseControl[][]}
      */
-    groupControls(controls: BaseControl<string>[], controlsPerRow: number): BaseControl<string>[][] {
-        return this.groupRecursive([], [], controls, controlsPerRow);
+    groupControls(groupControl: GroupControl): BaseControl[][] {
+        return this.groupRecursive([], [], groupControl.groupControls, groupControl.controlsPerRow);
     }
 
-    private groupRecursive(groupedControls: BaseControl<string>[][], tempGroup: BaseControl<string>[],
-                           controls: BaseControl<string>[], controlsPerRow: number) {
+    private groupRecursive(groupedControls: BaseControl[][], tempGroup: BaseControl[],
+                           controls: BaseControl[], controlsPerRow: number) {
 
         if (controls.length === 0) {
             // last iteration, add remaining controls in a group
@@ -45,17 +46,17 @@ export class GroupingService {
         return this.groupRecursive(groupedControls, tempGroup, controls.slice(1), controlsPerRow);
     }
 
-    private pushNonEmptyGroup(tempGroup: BaseControl<string>[], groupedControls: BaseControl<string>[][]) {
+    private pushNonEmptyGroup(tempGroup: BaseControl[], groupedControls: BaseControl[][]) {
         if (tempGroup.length !== 0) {
             groupedControls.push(tempGroup);
         }
     }
 
-    private isMultiControlType(controls: BaseControl<string>[]) {
+    private isMultiControlType(controls: BaseControl[]) {
         return controls[0] && (controls[0].controlType === ControlType.GROUP || controls[0].controlType === ControlType.ARRAY);
     }
 
-    private isTempGroupFull(tempGroup: BaseControl<string>[], controlsPerRow: number) {
+    private isTempGroupFull(tempGroup: BaseControl[], controlsPerRow: number) {
         return tempGroup.length === controlsPerRow;
     }
 }

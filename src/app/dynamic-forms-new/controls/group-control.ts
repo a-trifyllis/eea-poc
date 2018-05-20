@@ -9,6 +9,8 @@ export class GroupControl extends BaseControl {
     unrenderedControls: BaseControl[];
     groupValidators?: ValidatorFn[];
     controlsPerRow?: number;
+    showErrors?: boolean;
+    showNestedFormGroupErrors?: boolean;
 
     constructor(options: GroupControlOptions = {}) {
         super(options);
@@ -17,6 +19,8 @@ export class GroupControl extends BaseControl {
         this.unrenderedControls = options.unrenderedControls || [];
         this.groupValidators = options.groupValidators;
         this.controlsPerRow = options.controlsPerRow === undefined ? 1 : options.controlsPerRow;
+        this.showErrors = options.showErrors;
+        this.showNestedFormGroupErrors = options.showNestedFormGroupErrors;
     }
 }
 
@@ -25,4 +29,6 @@ export interface GroupControlOptions extends BaseControlOptions {
     unrenderedControls?: BaseControl[];
     groupValidators?: ValidatorFn[];
     controlsPerRow?: number;
+    showErrors?: boolean;
+    showNestedFormGroupErrors?: boolean;
 }

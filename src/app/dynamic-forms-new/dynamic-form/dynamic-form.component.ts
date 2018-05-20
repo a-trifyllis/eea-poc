@@ -1,6 +1,8 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {FormGroup} from '@angular/forms';
 import {GroupControl} from '../controls/group-control';
+import {BaseControl} from '../controls/base-control';
+import {GroupingService} from '../grouping.service';
 
 @Component({
     selector: 'dynamic-form',
@@ -13,10 +15,13 @@ export class DynamicFormComponent implements OnInit {
 
     @Input() groupControl: GroupControl;
 
-    constructor() {
+    groupedControls: BaseControl[][];
+
+    constructor(private groupingService: GroupingService) {
     }
 
     ngOnInit() {
+        this.groupedControls = this.groupingService.groupControls(this.groupControl);
     }
 
 }
