@@ -11,11 +11,10 @@
                [id]="control.key"
                [formControlName]="control.key">
 
-        <input *ngSwitchCase="ControlType.NUMBER" pInputText type="number"
+        <input *ngSwitchCase="ControlType.NUMBER" pInputText
                [id]="control.key"
                [formControlName]="control.key"
-                min="0"
-               onkeydown="javascript: return event.keyCode > 69 ? false : true">
+                min="0">
 
         <!-- PRIME NG AUTO COMPLETE-->
         <p-autoComplete *ngSwitchCase="ControlType.AUTOCOMPLETE"

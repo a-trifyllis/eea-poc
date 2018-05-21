@@ -13,7 +13,7 @@ export class NumberControl extends BaseControl {
     constructor(options: BaseControlOptions = {}) {
         super(options);
         this.validators.push({
-            errorKey: 'number',
+            errorKey: 'pattern',
             validator: Validators.pattern(/^(0|[1-9][0-9]*)$/i),
             validationMessage: 'Only numbers allowed!'
         });
