@@ -2,7 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { EditableTableComponent } from './editable-table.component';
 
-describe('EditableTableComponent', () => {
+xdescribe('EditableTableComponent', () => {
   let component: EditableTableComponent;
   let fixture: ComponentFixture<EditableTableComponent>;
 

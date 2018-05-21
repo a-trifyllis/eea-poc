@@ -1,9 +1,9 @@
-<error-messages *ngIf="groupControl.showErrors"
+<error-messages *ngIf="groupControl && groupControl.showErrors"
                 [relatedFormGroup]="formGroup"
                 [showNestedErrors]="groupControl.showNestedFormGroupErrors">
 </error-messages>
 
-<div [formGroup]="formGroup">
+<div *ngIf="formGroup" [formGroup]="formGroup">
 
     <ng-content select="[form-header]"></ng-content>
 

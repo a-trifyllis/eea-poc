@@ -2,7 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { FuelPetrolTabComponent } from './fuel-petrol-tab.component';
 
-describe('FuelPetrolTabComponent', () => {
+xdescribe('FuelPetrolTabComponent', () => {
   let component: FuelPetrolTabComponent;
   let fixture: ComponentFixture<FuelPetrolTabComponent>;
 

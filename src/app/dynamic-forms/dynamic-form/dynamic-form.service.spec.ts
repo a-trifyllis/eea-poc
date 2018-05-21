@@ -8,7 +8,7 @@ import {ArrayControl} from '../controls/array-control';
 
 let service: DynamicFormService;
 
-fdescribe('DynamicFormService', () => {
+describe('DynamicFormService', () => {
     beforeEach(() => {
         TestBed.configureTestingModule({
             providers: [DynamicFormService]

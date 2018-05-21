@@ -6,7 +6,7 @@ import {GroupControl} from '../dynamic-forms/controls/group-control';
 
 let service: GroupingService;
 
-fdescribe('GroupingService', () => {
+describe('GroupingService', () => {
     beforeEach(() => {
         TestBed.configureTestingModule({
             providers: [GroupingService]
@@ -22,6 +22,7 @@ fdescribe('GroupingService', () => {
     describe('Group controls per row', () => {
         it('should group correctly one control per line', () => {
             const groupControl = new GroupControl({
+                key: 'testGroup',
                 groupControls: [
                     new TextBoxControl({
                         key: 'testTextBox1',
@@ -44,6 +45,7 @@ fdescribe('GroupingService', () => {
 
         it('should group correctly two controls per line', () => {
             const groupControl = new GroupControl({
+                key: 'testGroup',
                 groupControls: [
                     new TextBoxControl({
                         key: 'testTextBox1',
@@ -70,6 +72,7 @@ fdescribe('GroupingService', () => {
 
         it('should group correctly when controls contain group in the beginning', () => {
             const groupControl = new GroupControl({
+                key: 'testGroup',
                     groupControls: [
                         new GroupControl({
                             key: 'testGroup1',
@@ -105,6 +108,7 @@ fdescribe('GroupingService', () => {
 
         it('should group correctly when controls contain group in the middle', () => {
             const groupControl = new GroupControl({
+                key: 'testGroup',
                 groupControls: [
 
                     new TextBoxControl({
@@ -139,6 +143,7 @@ fdescribe('GroupingService', () => {
 
         it('should group correctly when controls contain group in the end', () => {
             const groupControl = new GroupControl({
+                key: 'testGroup',
                 groupControls: [
 
                     new TextBoxControl({
@@ -174,6 +179,7 @@ fdescribe('GroupingService', () => {
 
         it('should group correctly when only one group is provided', () => {
             const groupControl = new GroupControl({
+                key: 'testGroup',
                 groupControls: [
                     new GroupControl({
                         key: 'testGroup1',

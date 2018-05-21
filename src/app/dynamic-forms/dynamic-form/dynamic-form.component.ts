@@ -34,6 +34,9 @@ export class DynamicFormComponent implements OnInit {
     }
 
     ngOnInit() {
+        if (!this.formGroup || !this.groupControl) {
+            return;
+        }
         this.groupedControls = this.groupingService.groupControls(this.groupControl);
 
         this.initValidation();

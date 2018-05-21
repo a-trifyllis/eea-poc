@@ -15,9 +15,10 @@ import {ArrayControl} from '../controls/array-control';
 import {GroupControl} from '../controls/group-control';
 import {GroupingService} from '../grouping.service';
 
-fdescribe('DynamicFormComponent', () => {
+describe('DynamicFormComponent', () => {
     let component: DynamicFormComponent;
     let fixture: ComponentFixture<DynamicFormComponent>;
+    let dynamicFormService: DynamicFormService;
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
@@ -40,6 +41,7 @@ fdescribe('DynamicFormComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(DynamicFormComponent);
         component = fixture.componentInstance;
+        dynamicFormService = TestBed.get(DynamicFormService);
         fixture.detectChanges();
     });
 
@@ -55,6 +57,7 @@ fdescribe('DynamicFormComponent', () => {
 
     it('should render correctly a text box with its label', () => {
         component.groupControl = new GroupControl({
+            key: 'testGroup',
             groupControls: [
                 new TextBoxControl({
                     key: 'testTextBox',
@@ -62,6 +65,8 @@ fdescribe('DynamicFormComponent', () => {
                 })
             ]
         });
+
+        component.formGroup = dynamicFormService.toFormGroup(component.groupControl);
 
         initComponent();
 
@@ -86,6 +91,7 @@ fdescribe('DynamicFormComponent', () => {
 
     it('should render two elements side by side when controlsPerRow is 2', () => {
         component.groupControl = new GroupControl({
+            key: 'testGroup',
             groupControls: [
                 new TextBoxControl({
                     key: 'testTextBox',
@@ -98,7 +104,7 @@ fdescribe('DynamicFormComponent', () => {
             ],
             controlsPerRow: 2
         });
-
+        component.formGroup = dynamicFormService.toFormGroup(component.groupControl);
         initComponent();
 
         const dynamicFormComponent: DebugElement = fixture.debugElement;
@@ -118,6 +124,7 @@ fdescribe('DynamicFormComponent', () => {
 
     it('should contain validation error when text field is invalid', fakeAsync(() => {
         component.groupControl = new GroupControl({
+            key: 'testGroup',
             groupControls: [
                 new TextBoxControl({
                     key: 'testTextBox',
@@ -132,7 +139,7 @@ fdescribe('DynamicFormComponent', () => {
                 })
             ]
         });
-
+        component.formGroup = dynamicFormService.toFormGroup(component.groupControl);
         initComponent();
 
         const dynamicFormComponent: DebugElement = fixture.debugElement;
@@ -152,6 +159,7 @@ fdescribe('DynamicFormComponent', () => {
     it('should not render array controls', () => {
 
         component.groupControl = new GroupControl({
+            key: 'testGroup',
             groupControls: [
                 new ArrayControl({
                     key: 'testArray',
@@ -164,7 +172,7 @@ fdescribe('DynamicFormComponent', () => {
                 })
             ]
         });
-
+        component.formGroup = dynamicFormService.toFormGroup(component.groupControl);
         initComponent();
 
         const dynamicFormComponent: DebugElement = fixture.debugElement;
