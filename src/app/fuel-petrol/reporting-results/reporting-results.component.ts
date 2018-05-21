@@ -93,6 +93,8 @@ export class ReportingResultsComponent implements OnInit {
 
     close() {
         this.displayDialog = false;
+        // reset FormGroup value to initial
+        this.group.get(this.selectedReportingResult).patchValue(this.value[this.selectedReportingResult]);
     }
 
 
