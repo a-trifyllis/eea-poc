@@ -71,8 +71,7 @@ export class ReportingResultsComponent implements OnInit {
     }
 
     filteredGroupControl(key) {
-        let groupControl = (this.controls.filter(control => control.key === key)[0] as GroupControl);
-        return groupControl;
+        return (this.controls.filter(control => control.key === key)[0] as GroupControl);
     }
 
     openReportingResultDialog($event) {

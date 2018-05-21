@@ -18,7 +18,6 @@ export class FuelPetrolTabComponent implements OnInit {
     @Input() columns;
 
     constructor() {
-        console.log(this.petrolFormGroup);
     }
 
     ngOnInit() {
@@ -41,9 +40,9 @@ export class FuelPetrolTabComponent implements OnInit {
        return this.petrolGroupControl.groupControls;
     }
 
-    getSamplingFrequencyControls() {
-        const sampleFrequencyGroupControl = this.petrolGroupControl.groupControls
+    getSamplingFrequencyGroupControl() {
+        return this.petrolGroupControl.groupControls
             .find(control => control.key === 'sampleFrequency') as GroupControl;
-        return sampleFrequencyGroupControl.groupControls;
+
     }
 }

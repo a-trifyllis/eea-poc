@@ -113,7 +113,8 @@ export class FuelPetrolService {
                 .concat(this.getReportingResultGroups(reportResultTypes))
                 .concat(new GroupControl({
                     key: 'sampleFrequency',
-                    groupControls: this.getSampleFrequencyControls()
+                    groupControls: this.getSampleFrequencyControls(),
+                    controlsPerRow: 3
                 }))
         });
     }
