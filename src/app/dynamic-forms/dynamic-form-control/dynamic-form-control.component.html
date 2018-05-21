@@ -14,7 +14,7 @@
         <input *ngSwitchCase="ControlType.NUMBER" pInputText type="number"
                [id]="control.key"
                [formControlName]="control.key"
-               [attr.disabled]="control.disabled()?'':null" min="0"
+                min="0"
                onkeydown="javascript: return event.keyCode > 69 ? false : true">
 
         <!-- PRIME NG AUTO COMPLETE-->
@@ -25,8 +25,7 @@
                         [field]="control['suggestionField']"
                         [dropdown]="true"
                         [formControlName]="control.key"
-                        [forceSelection]="true"
-                        [disabled]="control.disabled()">
+                        [forceSelection]="true">
         </p-autoComplete>
 
         <!-- PRIME NG CALENDAR-->
