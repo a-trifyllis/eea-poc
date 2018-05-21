@@ -19,9 +19,10 @@
 
             <dynamic-form-control
                 *ngIf="control.controlType !== ControlType.GROUP && control.controlType !== ControlType.ARRAY"
-                [control]="control" [form]="formGroup"
+                [formGroup]="formGroup"
+                [control]="control"
                 [controlErrors]="getControlErrors(control.key)"
-                [controlsPerRow]="controlsPerRow">
+                [controlsPerRow]="groupControl.controlsPerRow">
             </dynamic-form-control>
 
         </ng-container>

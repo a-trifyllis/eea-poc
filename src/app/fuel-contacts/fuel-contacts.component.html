@@ -1,9 +1,7 @@
-<p-card title="Contact & Summary" styleClass="ui-fluid" [formGroup]="parentForm">
+<p-card title="Contact & Summary" styleClass="ui-fluid" [formGroup]="parentFormGroup">
 
-    <dynamic-form [formName]="'contacts'" [parent]="parentForm" [controls]="controls" [value]="contacts"
-                  (formSubmit)="onSubmit($event)" (formCreated)="retrieveFormGroup($event)"
-                  [showNestedFormGroupErrors]="true" [showErrors]="true" [customControls]="customControls"
-                  [controlsPerRow]="2">
+    <dynamic-form [groupControl]="fuelContactsGroupControl" [formGroup]="fuelContactsFormGroup" [value]="contacts">
+
         <div form-header>
             <h4>
                 Details of those compiling the Fuel Quality Monitoring Report
@@ -71,7 +69,8 @@
 
         <!--NOTE: this ui-g class is absolutely required so as to not break the grid layout!-->
         <div class="ui-g">
-            <dynamic-form-control [control]="generalSummary" [form]="dynamicForm">
+
+            <dynamic-form-control [formGroup]="fuelContactsFormGroup" [control]="generalSummary">
             </dynamic-form-control>
         </div>
 

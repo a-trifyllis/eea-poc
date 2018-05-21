@@ -20,7 +20,6 @@ import {FuelContactsComponent} from './fuel-contacts/fuel-contacts.component';
 import {FuelPetrolComponent} from './fuel-petrol/fuel-petrol.component';
 
 import {SampleFrequencyComponent} from './fuel-petrol/sample-frequency/sample-frequency.component';
-import {DynamicFormsModule} from './dynamic-forms/dynamic-forms.module';
 import {FuelContactsService} from './fuel-contacts/fuel-conacts.service';
 import {ReportingResultsComponent} from './fuel-petrol/reporting-results/reporting-results.component';
 import {ReportingResultComponent} from './fuel-petrol/reporting-results/reporting-result/reporting-result.component';
@@ -31,6 +30,7 @@ import {ConfigService} from './config.service';
 import { HotTableModule } from '@handsontable/angular';
 import {ReportingResultsService} from './fuel-petrol/reporting-results/reporting-results.service';
 import { EditableTableComponent } from './editable-table/editable-table.component';
+import {DynamicFormsNewModule} from './dynamic-forms-new/dynamic-forms-new.module';
 
 @NgModule({
     declarations: [
@@ -55,7 +55,7 @@ import { EditableTableComponent } from './editable-table/editable-table.componen
         AutoCompleteModule,
         TabViewModule,
         CalendarModule,
-        DynamicFormsModule,
+        DynamicFormsNewModule,
         MessagesModule,
         TableModule,
         DialogModule,

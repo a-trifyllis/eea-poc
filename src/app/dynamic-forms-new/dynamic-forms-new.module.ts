@@ -4,9 +4,12 @@ import {AutoCompleteModule, InputTextModule, MessagesModule} from 'primeng/prime
 import {CalendarModule} from 'primeng/calendar';
 import {ButtonModule} from 'primeng/button';
 import {ReactiveFormsModule} from '@angular/forms';
+import {ErrorMessagesComponent} from './error-messages/error-messages.component';
+import {ValidationService} from './validation/validation.service';
 import {DynamicFormComponent} from './dynamic-form/dynamic-form.component';
-import { DynamicFormConrolComponent } from './dynamic-form-conrol/dynamic-form-conrol.component';
-import { ErrorMessagesComponent } from './error-messages/error-messages.component';
+import {DynamicFormControlComponent} from './dynamic-form-control/dynamic-form-control.component';
+import {DynamicFormService} from './dynamic-form/dynamic-form.service';
+import {GroupingService} from './grouping.service';
 
 @NgModule({
     imports: [
@@ -18,7 +21,9 @@ import { ErrorMessagesComponent } from './error-messages/error-messages.componen
         MessagesModule,
         CalendarModule
     ],
-    declarations: [DynamicFormComponent, DynamicFormConrolComponent, ErrorMessagesComponent]
+    declarations: [DynamicFormComponent, DynamicFormControlComponent, ErrorMessagesComponent],
+    providers: [DynamicFormService, ValidationService, GroupingService],
+    exports: [DynamicFormComponent, DynamicFormControlComponent, ErrorMessagesComponent]
 })
 export class DynamicFormsNewModule {
 }
