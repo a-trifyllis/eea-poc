@@ -19,7 +19,7 @@ describe('ErrorMessagesComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(ErrorMessagesComponent);
         component = fixture.componentInstance;
-        component.relatedForm = new FormGroup({});
+        component.relatedFormGroup = new FormGroup({});
         fixture.detectChanges();
     });
 

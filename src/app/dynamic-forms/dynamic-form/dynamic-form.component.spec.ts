@@ -8,13 +8,14 @@ import {DynamicFormControlComponent} from '../dynamic-form-control/dynamic-form-
 import {DynamicFormService} from './dynamic-form.service';
 import {ErrorMessagesComponent} from '../error-messages/error-messages.component';
 import {ValidationService} from '../validation/validation.service';
-import {RelationService} from '../relation/relation.service';
-import {TextboxControl} from '../controls/textbox-control';
+import {TextBoxControl} from '../controls/textbox-control';
 import {DebugElement} from '@angular/core';
 import {By} from '@angular/platform-browser';
 import {ArrayControl} from '../controls/array-control';
+import {GroupControl} from '../controls/group-control';
+import {GroupingService} from '../grouping.service';
 
-describe('DynamicFormComponent', () => {
+fdescribe('DynamicFormComponent', () => {
     let component: DynamicFormComponent;
     let fixture: ComponentFixture<DynamicFormComponent>;
 
@@ -29,7 +30,7 @@ describe('DynamicFormComponent', () => {
                 MessagesModule,
                 CalendarModule
             ],
-            providers: [DynamicFormService, ValidationService, RelationService,
+            providers: [DynamicFormService, ValidationService, GroupingService,
                 {provide: ComponentFixtureAutoDetect, useValue: true}
             ]
         })
@@ -39,22 +40,28 @@ describe('DynamicFormComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(DynamicFormComponent);
         component = fixture.componentInstance;
-        component.formName = 'testForm1';
-        component.controls = [];
+        fixture.detectChanges();
     });
 
     it('should create', () => {
+        component.groupControl = new GroupControl({
+            key: 'testGroup'
+        });
+        initComponent();
         expect(component).toBeTruthy();
+
     });
 
 
     it('should render correctly a text box with its label', () => {
-        component.controls = [
-            new TextboxControl({
-                key: 'testTextBox',
-                label: 'testLabel'
-            })
-        ];
+        component.groupControl = new GroupControl({
+            groupControls: [
+                new TextBoxControl({
+                    key: 'testTextBox',
+                    label: 'testLabel'
+                })
+            ]
+        });
 
         initComponent();
 
@@ -78,17 +85,19 @@ describe('DynamicFormComponent', () => {
     });
 
     it('should render two elements side by side when controlsPerRow is 2', () => {
-        component.controls = [
-            new TextboxControl({
-                key: 'testTextBox',
-                label: 'testLabel'
-            }),
-            new TextboxControl({
-                key: 'testTextBox1',
-                label: 'testLabel1'
-            })
-        ];
-        component.controlsPerRow = 2;
+        component.groupControl = new GroupControl({
+            groupControls: [
+                new TextBoxControl({
+                    key: 'testTextBox',
+                    label: 'testLabel'
+                }),
+                new TextBoxControl({
+                    key: 'testTextBox1',
+                    label: 'testLabel1'
+                })
+            ],
+            controlsPerRow: 2
+        });
 
         initComponent();
 
@@ -108,19 +117,21 @@ describe('DynamicFormComponent', () => {
     });
 
     it('should contain validation error when text field is invalid', fakeAsync(() => {
-        component.controls = [
-            new TextboxControl({
-                key: 'testTextBox',
-                label: 'testLabel',
-                validators: [
-                    {
-                        formError: 'minlength',
-                        validator: Validators.minLength(5),
-                        validationMessage: 'Min length is 5'
-                    }
-                ]
-            })
-        ];
+        component.groupControl = new GroupControl({
+            groupControls: [
+                new TextBoxControl({
+                    key: 'testTextBox',
+                    label: 'testLabel',
+                    validators: [
+                        {
+                            errorKey: 'minlength',
+                            validator: Validators.minLength(5),
+                            validationMessage: 'Min length is 5'
+                        }
+                    ]
+                })
+            ]
+        });
 
         initComponent();
 
@@ -140,17 +151,19 @@ describe('DynamicFormComponent', () => {
 
     it('should not render array controls', () => {
 
-        component.controls = [
-            new ArrayControl({
-                key: 'testArray',
-                arrayControls: [
-                    new TextboxControl({
-                        key: 'testTextbox1',
-                        label: 'testTextbox1'
-                    })
-                ]
-            })
-        ];
+        component.groupControl = new GroupControl({
+            groupControls: [
+                new ArrayControl({
+                    key: 'testArray',
+                    arrayControls: [
+                        new TextBoxControl({
+                            key: 'testTextbox1',
+                            label: 'testTextbox1'
+                        })
+                    ]
+                })
+            ]
+        });
 
         initComponent();
 

@@ -1,30 +1,43 @@
-import { BaseControl, BaseControlOptions, ControlType } from './base-control';
-import { ValidatorFn } from '@angular/forms';
+import {BaseControl, BaseControlOptions, ControlType} from './base-control';
+import {ValidatorFn} from '@angular/forms';
 
-export class ArrayControl extends BaseControl<string> {
+export class ArrayControl extends BaseControl {
+
     controlType = ControlType.ARRAY;
-    arrayValidators?: ValidatorFn[];
-    arrayControls?: BaseControl<string>[];
 
-    constructor(options: ArrayControlOptions<string> = {}) {
+    arrayControls: BaseControl[];
+    unrenderedControls: BaseControl[];
+    arrayValidators?: ValidatorFn[];
+
+    constructor(options: ArrayControlOptions = {}) {
         super(options);
-        this.arrayValidators = options.arrayValidators;
+
         this.arrayControls = options.arrayControls;
-        // TODO check if BaseControl validators is set instead of array validators and retrieve validators from it
+        this.unrenderedControls = options.unrenderedControls || [];
+        this.arrayValidators = options.arrayValidators;
     }
 
-    push(control: BaseControl<string>) {
+    push(control: BaseControl) {
         this.arrayControls.push(control);
+    }
+
+    pushUnrendered(control: BaseControl) {
+        this.unrenderedControls.push(control);
     }
 
     /** Remove the control at the given `index` in the array. */
     removeAt(index: number) {
         this.arrayControls.splice(index, 1);
     }
+
+    removeUnrenderedAt(index: number) {
+        this.unrenderedControls.splice(index, 1);
+    }
 }
 
 
-export interface ArrayControlOptions<T> extends BaseControlOptions<string> {
+export interface ArrayControlOptions extends BaseControlOptions {
+    arrayControls?: BaseControl[];
+    unrenderedControls?: BaseControl[];
     arrayValidators?: ValidatorFn[];
-    arrayControls?: BaseControl<string>[];
 }

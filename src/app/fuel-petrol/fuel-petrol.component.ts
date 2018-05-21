@@ -2,14 +2,14 @@ import {AfterViewInit, ChangeDetectorRef, Component, Input, OnInit} from '@angul
 import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
 import {Petrol} from './petrol';
 
-import {ArrayControl} from '../dynamic-forms-new/controls/array-control';
+import {ArrayControl} from '../dynamic-forms/controls/array-control';
 import {FuelPetrolService} from '../fuel-petrol/fuel-petrol.service';
 import {FuelPetrol} from '../fuel-data';
 import {PetrolFormValidators} from './petrol-form-validators';
 import {FuelDataService} from '../fuel-data.service';
 import {ConfigService} from '../config.service';
-import {DynamicFormService} from '../dynamic-forms-new/dynamic-form/dynamic-form.service';
-import {GroupControl} from '../dynamic-forms-new/controls/group-control';
+import {DynamicFormService} from '../dynamic-forms/dynamic-form/dynamic-form.service';
+import {GroupControl} from '../dynamic-forms/controls/group-control';
 import {Observable} from 'rxjs/Observable';
 
 

@@ -3,10 +3,10 @@ import {Contacts} from './fuel-contacts';
 import {HttpClient} from '@angular/common/http';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {FuelContactsService} from './fuel-conacts.service';
-import {GroupControl} from '../dynamic-forms-new/controls/group-control';
-import {BaseControl} from '../dynamic-forms-new/controls/base-control';
-import {TextBoxControl} from '../dynamic-forms-new/controls/textbox-control';
-import {DynamicFormService} from '../dynamic-forms-new/dynamic-form/dynamic-form.service';
+import {GroupControl} from '../dynamic-forms/controls/group-control';
+import {BaseControl} from '../dynamic-forms/controls/base-control';
+import {TextBoxControl} from '../dynamic-forms/controls/textbox-control';
+import {DynamicFormService} from '../dynamic-forms/dynamic-form/dynamic-form.service';
 
 @Component({
     selector: 'fuel-contacts',

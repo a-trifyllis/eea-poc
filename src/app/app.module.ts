@@ -30,7 +30,7 @@ import {ConfigService} from './config.service';
 import { HotTableModule } from '@handsontable/angular';
 import {ReportingResultsService} from './fuel-petrol/reporting-results/reporting-results.service';
 import { EditableTableComponent } from './editable-table/editable-table.component';
-import {DynamicFormsNewModule} from './dynamic-forms-new/dynamic-forms-new.module';
+import {DynamicFormsModule} from './dynamic-forms/dynamic-forms.module';
 
 @NgModule({
     declarations: [
@@ -55,7 +55,7 @@ import {DynamicFormsNewModule} from './dynamic-forms-new/dynamic-forms-new.modul
         AutoCompleteModule,
         TabViewModule,
         CalendarModule,
-        DynamicFormsNewModule,
+        DynamicFormsModule,
         MessagesModule,
         TableModule,
         DialogModule,

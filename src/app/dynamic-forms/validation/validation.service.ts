@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
-import {AbstractControl, FormGroup, FormArray} from '@angular/forms';
-import {BaseControl} from '../controls/base-control';
+import {AbstractControl, FormArray, FormGroup} from '@angular/forms';
 import {ErrorTuple, FormError, ValidationErrorMessage} from './form-error';
+import {BaseControl} from '..//controls/base-control';
 
 export const defaultValidationMessages = {
     'required': 'This field is required',
@@ -25,10 +25,10 @@ export class ValidationService {
      *
      * This is the object were the error messages will be stored, per control and per error type (key) when validation is performed
      */
-    generateFormErrorStructure(control: BaseControl<any>): ErrorTuple[] {
+    generateFormErrorStructure(control: BaseControl): ErrorTuple[] {
         return control.validators.map(validator => {
             return {
-                errorName: validator.formError,
+                errorKey: validator.errorKey,
                 errorMessage: ''
             };
         });
@@ -47,10 +47,10 @@ export class ValidationService {
      *
      * This object is used to select which validation messages will be shown for a specific control
      */
-    generateValidationMessages(control: BaseControl<any>): ErrorTuple[] {
+    generateValidationMessages(control: BaseControl): ErrorTuple[] {
         return control.validators.map(validator => {
             return {
-                errorName: validator.formError,
+                errorKey: validator.errorKey,
                 errorMessage: this.getValidationMessages(validator)
             };
         });
@@ -76,7 +76,7 @@ export class ValidationService {
                 const control = form.get(field);
                 if (!(control instanceof FormGroup) && !(control instanceof FormArray) && this.isControlInvalid(control)) {
                     Object.keys(control.errors).map(errorName => {
-                        fieldFormErrors.errors.push(fieldMessages.find(m => m.errorName === errorName));
+                        fieldFormErrors.errors.push(fieldMessages.find(m => m.errorKey === errorName));
                     });
                 }
             });
@@ -92,7 +92,7 @@ export class ValidationService {
 
     // if a validation message is not passed in the control, a default one is selected
     private getValidationMessages(key): string {
-        return !!key.validationMessage ? key.validationMessage : defaultValidationMessages[key.formError];
+        return !!key.validationMessage ? key.validationMessage : defaultValidationMessages[key.errorKey];
     }
 
     private isControlInvalid(control: AbstractControl) {

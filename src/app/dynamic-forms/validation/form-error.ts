@@ -4,7 +4,7 @@ export interface FormError {
 }
 
 export interface ErrorTuple {
-    errorName: string;
+    errorKey: string;
     errorMessage: string;
 }
 

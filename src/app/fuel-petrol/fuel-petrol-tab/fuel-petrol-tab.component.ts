@@ -1,8 +1,8 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {FormGroup} from '@angular/forms';
 
-import {DynamicFormService} from '../../dynamic-forms-new/dynamic-form/dynamic-form.service';
-import {GroupControl} from '../../dynamic-forms-new/controls/group-control';
+import {DynamicFormService} from '../../dynamic-forms/dynamic-form/dynamic-form.service';
+import {GroupControl} from '../../dynamic-forms/controls/group-control';
 
 @Component({
     selector: 'fuel-petrol-tab',

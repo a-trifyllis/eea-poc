@@ -1,22 +1,24 @@
 import {BaseControl, BaseControlOptions, ControlType} from './base-control';
-import { InputControl, InputControlOptions } from './input-control';
-import { Validators } from '@angular/forms';
+import {Validators} from '@angular/forms';
 
-export class NumberControl extends InputControl<string> {
+/**
+ * Creates an input with default number validator.
+ * A pattern validator is used because the default number input field allows non-numeric characters
+ * (like 'e')
+ */
+export class NumberControl extends BaseControl {
+
     controlType = ControlType.NUMBER;
 
-    constructor(options: NumberControlOptions<string> = {}) {
+    constructor(options: BaseControlOptions = {}) {
         super(options);
         this.validators.push({
-            formError: 'number',
+            errorKey: 'number',
             validator: Validators.pattern(/^(0|[1-9][0-9]*)$/i),
             validationMessage: 'Only numbers allowed!'
         });
+
     }
-}
-
-export interface NumberControlOptions<T> extends InputControlOptions<string> {
-
 }
 
 

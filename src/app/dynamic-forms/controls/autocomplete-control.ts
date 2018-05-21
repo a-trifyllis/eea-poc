@@ -1,13 +1,13 @@
 import {BaseControl, BaseControlOptions, ControlType} from './base-control';
 
 
-export class AutocompleteControl extends BaseControl<string> {
+export class AutocompleteControl extends BaseControl {
     controlType = ControlType.AUTOCOMPLETE;
     suggestions: { value: any[] };
     searchFn: Function;
     suggestionField: string;
 
-    constructor(options: AutocompleteControlOptions<string> = {}) {
+    constructor(options: AutocompleteControlOptions = {}) {
         super(options);
         this.suggestions = options.suggestions;
         this.searchFn = options.searchFn;
@@ -20,7 +20,7 @@ export class AutocompleteControl extends BaseControl<string> {
 }
 
 
-export interface AutocompleteControlOptions<T> extends BaseControlOptions<string> {
+export interface AutocompleteControlOptions extends BaseControlOptions {
     suggestions?: { value: any[] };
     searchFn?: Function;
     suggestionField?: string;

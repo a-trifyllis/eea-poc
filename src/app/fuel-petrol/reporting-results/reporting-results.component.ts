@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {BaseControl} from '../../dynamic-forms/controls/base-control';
-import {GroupControl} from '../../dynamic-forms/controls/group-controll';
+import {GroupControl} from '../../dynamic-forms/controls/group-control';
 import {FormGroup, ValidatorFn} from '@angular/forms';
 
 import {ReportingResultType} from './reporting-result-type';
@@ -19,7 +19,7 @@ export class ReportingResultsComponent implements OnInit {
 
     @Input() reportResultTypes: ReportingResultType[];
 
-    @Input() controls: BaseControl<string>[];
+    @Input() controls: BaseControl[];
 
     @Input() group: FormGroup;
 

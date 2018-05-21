@@ -1,14 +1,14 @@
-import {TestBed} from '@angular/core/testing';
+import {inject, TestBed} from '@angular/core/testing';
 
 import {DynamicFormService} from './dynamic-form.service';
-import {TextboxControl} from '../controls/textbox-control';
 import {AbstractControl, FormArray, FormControl, FormGroup, ValidatorFn, Validators} from '@angular/forms';
-import {GroupControl} from '../controls/group-controll';
+import {GroupControl} from '../controls/group-control';
+import {TextBoxControl} from '../controls/textbox-control';
 import {ArrayControl} from '../controls/array-control';
 
 let service: DynamicFormService;
 
-describe('DynamicFormService', () => {
+fdescribe('DynamicFormService', () => {
     beforeEach(() => {
         TestBed.configureTestingModule({
             providers: [DynamicFormService]
@@ -16,313 +16,137 @@ describe('DynamicFormService', () => {
         service = TestBed.get(DynamicFormService);
     });
 
-    it('should be created', function () {
+    it('should be created', inject([DynamicFormService], () => {
         expect(service).toBeTruthy();
-    });
+    }));
 
-    describe('Create Dynamic Form Group', () => {
+    it('should create form group with one text box inside parent form', () => {
+        const parentFormGroup = new FormGroup({});
 
-        it('should create form group with one text box inside parent form', function () {
-            const parentFormGroup = new FormGroup({});
-
-            service.toFormGroup([
-                    new TextboxControl({
+        service.toFormGroup(
+            new GroupControl({
+                key: 'testGroup',
+                groupControls: [
+                    new TextBoxControl({
                         key: 'testTextBox',
                         label: 'testLabel'
                     })
-                ],
-                [],
-                [],
-                'testGroup',
-                parentFormGroup
-            );
+                ]
+            }),
+            parentFormGroup
+        );
 
-            const testGroup = parentFormGroup.get('testGroup') as FormGroup;
-            expect(testGroup).toBeDefined();
-            expect(Object.keys(testGroup.controls).length).toEqual(1);
+        const testGroup = parentFormGroup.get('testGroup') as FormGroup;
+        expect(testGroup).toBeDefined();
+        expect(Object.keys(testGroup.controls).length).toEqual(1);
 
-            const testTextBox = testGroup.get('testTextBox');
-            expect(testTextBox.valid).toBeTruthy();
+        const testTextBox = testGroup.get('testTextBox');
+        expect(testTextBox.valid).toBeTruthy();
 
-        });
+    });
 
-        it('should throw error when no key is provided in control', function () {
-            const parentFormGroup = new FormGroup({});
-            expect(
-                function () {
-                    service.toFormGroup([
-                            new TextboxControl({
+    it('should throw error when no key is provided in control', () => {
+        const parentFormGroup = new FormGroup({});
+        expect(
+            function () {
+                service.toFormGroup(
+                    new GroupControl({
+                        key: 'testGroup',
+                        groupControls: [
+                            new TextBoxControl({
                                 label: 'testLabel'
                             })
-                        ],
-                        [],
-                        [],
-                        'testGroup',
-                        parentFormGroup
-                    );
-                }
-            ).toThrow();
-        });
+                        ]
+                    }),
+                    parentFormGroup
+                );
+            }
+        ).toThrow();
+    });
 
-        it('should validate form group with one text box and a required validator', function () {
-            const parentFormGroup = new FormGroup({});
+    it('should validate form group with one text box and a required validator', function () {
+        const parentFormGroup = new FormGroup({});
 
-            service.toFormGroup([
-                    new TextboxControl({
+        service.toFormGroup(
+            new GroupControl({
+                key: 'testGroup',
+                groupControls: [
+                    new TextBoxControl({
                         key: 'testTextBox',
                         label: 'testLabel',
                         validators: [
                             {
-                                formError: 'required',
+                                errorKey: 'required',
                                 validator: Validators.required
                             }
                         ]
                     })
-                ],
-                [],
-                [],
-                'testGroup',
-                parentFormGroup
-            );
-
-            const formControl = parentFormGroup.get('testGroup').get('testTextBox') as FormControl;
-            // for some reason a form starts in invalid state
-            expect(formControl.valid).toBeFalsy();
-            expect(formControl.dirty).toBeFalsy();
-            formControl.setValue('test');
-            expect(formControl.valid).toBeTruthy();
-        });
-
-        it('should skip creation of nested form group (creation is done recursively)', function () {
-            const parentFormGroup = new FormGroup({});
-
-            service.toFormGroup([
-                    new GroupControl({
-                        key: 'nestedFormGroup',
-                        groupControls: [
-                            new TextboxControl({
-                                key: 'testTextBox',
-                                label: 'testLabel'
-                            })
-                        ]
-                    })
-                ],
-                [],
-                [],
-                'testGroup',
-                parentFormGroup
-            );
-
-            const topFormGroup = parentFormGroup.get('testGroup') as FormGroup;
-            const nestedFormGroup = topFormGroup.get('nestedFormGroup') as FormGroup;
-            expect(nestedFormGroup).toBeNull();
-        });
-
-        it('should create FormArray with validators from ArrayControl', function () {
-
-            const arrayControl = new ArrayControl({
-                key: 'petrols',
-                arrayControls: [
-                    new GroupControl({
-                        key: 'petrol1',
-                        groupControls: [
-                            new TextboxControl({
-                                key: 'testTextBox1',
-                                label: 'testLabel1'
-                            })
-                        ],
-                        groupValidators: [
-                            mockValidator(/EEE/i)
-                        ]
-                    }),
-                    new GroupControl({
-                        key: 'petrol2',
-                        groupControls: [
-                            new TextboxControl({
-                                key: 'testTextBox2',
-                                label: 'testLabel2'
-                            })
-                        ]
-                    }),
-                    new TextboxControl({
-                        key: 'testArrayTextBox1',
-                        label: 'testArrayLabel1'
-                    })
-                ],
-                arrayValidators: [
-                    mockValidator(/EEA/i)
                 ]
-            });
+            }),
+            parentFormGroup
+        );
 
-            const formGroup = service.toFormGroup([arrayControl], [], []);
-
-            expect(formGroup.get('petrols') instanceof FormArray).toBeTruthy();
-            const formArray = formGroup.get('petrols') as FormArray;
-            expect(formArray.controls.length).toEqual(3);
-            expect(formArray.validator).not.toBeNull();
-            expect(formArray.controls[0].validator).not.toBeNull();
-            expect(formArray.controls[1].validator).toBeNull();
-
-            expect(formArray.controls[2] instanceof FormControl).toBeTruthy();
-        });
+        const formGroup = parentFormGroup.get('testGroup').get('testTextBox') as FormControl;
+        // for some reason a form starts in invalid state
+        expect(formGroup.valid).toBeFalsy();
+        expect(formGroup.dirty).toBeFalsy();
+        formGroup.setValue('test');
+        expect(formGroup.valid).toBeTruthy();
     });
 
-    describe('Group controls per row', () => {
-        it('should group correctly one control per line', () => {
-            const controls = [
-                new TextboxControl({
-                    key: 'testTextBox1',
-                    label: 'testLabel1'
+    it('should create FormArray with validators from ArrayControl', function () {
+
+        const arrayControl = new ArrayControl({
+            key: 'petrols',
+            arrayControls: [
+                new GroupControl({
+                    key: 'petrol1',
+                    groupControls: [
+                        new TextBoxControl({
+                            key: 'testTextBox1',
+                            label: 'testLabel1'
+                        })
+                    ],
+                    groupValidators: [
+                        mockValidator(/EEE/i)
+                    ]
                 }),
-                new TextboxControl({
-                    key: 'testTextBox2',
-                    label: 'testLabel2'
+                new GroupControl({
+                    key: 'petrol2',
+                    groupControls: [
+                        new TextBoxControl({
+                            key: 'testTextBox2',
+                            label: 'testLabel2'
+                        })
+                    ]
+                }),
+                new TextBoxControl({
+                    key: 'testArrayTextBox1',
+                    label: 'testArrayLabel1'
                 })
-            ];
-
-            const groupedControls = service.groupControls(controls, 1);
-
-            expect(groupedControls.length).toEqual(2);
-            expect(groupedControls[0][0].key).toEqual('testTextBox1');
-            expect(groupedControls[1][0].key).toEqual('testTextBox2');
+            ],
+            arrayValidators: [
+                mockValidator(/EEA/i)
+            ]
         });
 
-        it('should group correctly two controls per line', () => {
-            const controls = [
-                new TextboxControl({
-                    key: 'testTextBox1',
-                    label: 'testLabel1'
-                }),
-                new TextboxControl({
-                    key: 'testTextBox2',
-                    label: 'testLabel2'
-                }),
-                new TextboxControl({
-                    key: 'testTextBox3',
-                    label: 'testLabel3'
-                })
-            ];
-            const groupedControls = service.groupControls(controls, 2);
-
-            expect(groupedControls.length).toEqual(2);
-            expect(groupedControls[0][0].key).toEqual('testTextBox1');
-            expect(groupedControls[0][1].key).toEqual('testTextBox2');
-            expect(groupedControls[1][0].key).toEqual('testTextBox3');
+        const groupControl = new GroupControl({
+            key: 'testGroup',
+            groupControls: [
+                arrayControl
+            ]
         });
 
-        it('should group correctly when controls contain group in the beginning', () => {
-            const controls = [
-                new GroupControl({
-                    key: 'testGroup1',
-                    groupControls: [
-                        new TextboxControl({
-                            key: 'testGroupTextBox1',
-                            label: 'testGroupLabel1'
-                        })
-                    ]
-                }),
-                new TextboxControl({
-                    key: 'testTextBox1',
-                    label: 'testLabel1'
-                }),
+        const formGroup = service.toFormGroup(groupControl);
 
-                new TextboxControl({
-                    key: 'testTextBox2',
-                    label: 'testLabel2'
-                }),
+        expect(formGroup.get('petrols') instanceof FormArray).toBeTruthy();
+        const formArray = formGroup.get('petrols') as FormArray;
+        expect(formArray.controls.length).toEqual(3);
+        expect(formArray.validator).not.toBeNull();
+        expect(formArray.controls[0].validator).not.toBeNull();
+        expect(formArray.controls[1].validator).toBeNull();
 
-            ];
-
-            const groupedControls = service.groupControls(controls, 2);
-
-            expect(groupedControls.length).toEqual(2);
-            expect(groupedControls[0][0].key).toEqual('testGroup1');
-            expect(groupedControls[1][0].key).toEqual('testTextBox1');
-            expect(groupedControls[1][1].key).toEqual('testTextBox2');
-        });
-
-        it('should group correctly when controls contain group in the middle', () => {
-            const controls = [
-
-                new TextboxControl({
-                    key: 'testTextBox1',
-                    label: 'testLabel1'
-                }),
-                new GroupControl({
-                    key: 'testGroup1',
-                    groupControls: [
-                        new TextboxControl({
-                            key: 'testGroupTextBox1',
-                            label: 'testGroupLabel1'
-                        })
-                    ]
-                }),
-                new TextboxControl({
-                    key: 'testTextBox2',
-                    label: 'testLabel2'
-                }),
-
-            ];
-
-            const groupedControls = service.groupControls(controls, 2);
-
-            expect(groupedControls.length).toEqual(3);
-            expect(groupedControls[0][0].key).toEqual('testTextBox1');
-            expect(groupedControls[1][0].key).toEqual('testGroup1');
-            expect(groupedControls[2][0].key).toEqual('testTextBox2');
-        });
-
-        it('should group correctly when controls contain group in the end', () => {
-            const controls = [
-
-                new TextboxControl({
-                    key: 'testTextBox1',
-                    label: 'testLabel1'
-                }),
-
-                new TextboxControl({
-                    key: 'testTextBox2',
-                    label: 'testLabel2'
-                }),
-                new GroupControl({
-                    key: 'testGroup1',
-                    groupControls: [
-                        new TextboxControl({
-                            key: 'testGroupTextBox1',
-                            label: 'testGroupLabel1'
-                        })
-                    ]
-                }),
-
-            ];
-
-            const groupedControls = service.groupControls(controls, 2);
-
-            expect(groupedControls.length).toEqual(2);
-            expect(groupedControls[0][0].key).toEqual('testTextBox1');
-            expect(groupedControls[0][1].key).toEqual('testTextBox2');
-            expect(groupedControls[1][0].key).toEqual('testGroup1');
-        });
-
-        it('should group correctly when only one group is provided', () => {
-            const controls = [
-                new GroupControl({
-                    key: 'testGroup1',
-                    groupControls: [
-                        new TextboxControl({
-                            key: 'testGroupTextBox1',
-                            label: 'testGroupLabel1'
-                        })
-                    ]
-                }),
-            ];
-
-            const groupedControls = service.groupControls(controls, 1);
-
-            expect(groupedControls.length).toEqual(1);
-            expect(groupedControls[0][0].key).toEqual('testGroup1');
-        });
-
+        expect(formArray.controls[2] instanceof FormControl).toBeTruthy();
     });
 });
 

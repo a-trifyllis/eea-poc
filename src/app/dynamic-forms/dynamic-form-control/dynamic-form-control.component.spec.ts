@@ -4,7 +4,7 @@ import {DynamicFormControlComponent} from './dynamic-form-control.component';
 import {AutoCompleteModule, CalendarModule, InputTextModule} from 'primeng/primeng';
 import {ButtonModule} from 'primeng/button';
 import {FormControl, FormGroup, ReactiveFormsModule} from '@angular/forms';
-import {TextboxControl} from '../controls/textbox-control';
+import {TextBoxControl} from '../controls/textbox-control';
 import {AutocompleteControl} from '../controls/autocomplete-control';
 
 describe('DynamicFormControlComponent', () => {
@@ -28,12 +28,11 @@ describe('DynamicFormControlComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(DynamicFormControlComponent);
         component = fixture.componentInstance;
-        component.control = new TextboxControl({
+        component.control = new TextBoxControl({
             key: 'testTextBox1',
             label: 'testTextBox1',
-            order: 1,
         });
-        component.form = new FormGroup({'testTextBox1': new FormControl('')});
+        component.formGroup = new FormGroup({'testTextBox1': new FormControl('')});
         fixture.detectChanges();
     });
 
@@ -41,15 +40,10 @@ describe('DynamicFormControlComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('should be valid', () => {
-        expect(component.isValid).toBeTruthy();
-    });
-
     it('should call filter method when available', () => {
         component.control = new AutocompleteControl({
             key: 'testAutocomplete1',
             label: 'testAutocomplete1',
-            order: 1,
             suggestions: <any>[],
             searchFn: () => {
             },

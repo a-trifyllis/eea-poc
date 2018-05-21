@@ -1,11 +1,11 @@
-import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {AbstractControl, FormGroup, ValidatorFn} from '@angular/forms';
-import {DynamicFormService} from './dynamic-form.service';
+import {Component, Input, OnInit} from '@angular/core';
+import {FormGroup} from '@angular/forms';
+import {GroupControl} from '../controls/group-control';
 import {BaseControl, ControlType} from '../controls/base-control';
+import {GroupingService} from '../grouping.service';
 import {debounceTime} from 'rxjs/operators/debounceTime';
-import {ValidationService} from '../validation/validation.service';
-import {RelationService} from '../relation/relation.service';
 import {FormError, ValidationErrorMessage} from '../validation/form-error';
+import {ValidationService} from '../validation/validation.service';
 
 @Component({
     selector: 'dynamic-form',
@@ -18,95 +18,26 @@ export class DynamicFormComponent implements OnInit {
     // https://stackoverflow.com/questions/42464367/angular2-use-enum-value-in-html-value-attribute/
     ControlType = ControlType;
 
-    /**
-     * List of controls to render in the form
-     * @type {any[]}
-     */
-    @Input() controls: BaseControl<any>[] = [];
+    @Input() formGroup: FormGroup;
 
-    /**
-     * List of controls to add in form but not render
-     * @type {any[]}
-     */
-    @Input() customControls: BaseControl<any>[] = [];
-
-    // TODO maybe it would be better if we handled group validators the same way as field ones.
-    /**
-     * Validators to add on the level of the FormGroup
-     * @type {any[]}
-     */
-    @Input() groupValidators: ValidatorFn[] = [];
-
-    /**
-     * FormControl that this nested FormGroup should be added on
-     */
-    @Input() parent: AbstractControl;
-
-    /**
-     * Name used as the control name when adding the form to its parent
-     */
-    @Input() formName: string;
-
-    /**
-     * This will recursively iterate through all child form groups to retrieve all validation errors
-     */
-    @Input() showNestedFormGroupErrors: boolean;
-
-    /**
-     * If false the validation errors of this form group will not be shown
-     */
-    @Input() showErrors: boolean;
+    @Input() groupControl: GroupControl;
 
     @Input() value: any;
 
-    /**
-     * How many controls should be grouped per grid row
-     */
-    @Input() controlsPerRow: number;
-
-    /**
-     * TODO: not yet used
-     * @type {EventEmitter<FormGroup>}
-     */
-    @Output() formSubmit = new EventEmitter<FormGroup>();
-
-    /**
-     * Emmited when the current form control is created
-     * @type {EventEmitter<FormGroup>}
-     */
-    @Output() formCreated = new EventEmitter<FormGroup>();
-
-    @Input() form: FormGroup;
+    groupedControls: BaseControl[][];
 
     formErrors: FormError[] = [];
 
     validationMessages: ValidationErrorMessage[] = [];
 
-    disabledControls: AbstractControl[] = [];
-
-    groupedControls: BaseControl<string>[][];
-
-    constructor(private dynamicFormService: DynamicFormService,
-                private cdRef: ChangeDetectorRef,
-                private validationService: ValidationService,
-                private relationService: RelationService) {
-
-        if (this.controlsPerRow === undefined) {
-            this.controlsPerRow = 1;
-        }
+    constructor(private groupingService: GroupingService, private validationService: ValidationService) {
     }
 
     ngOnInit() {
-        this.groupedControls = this.dynamicFormService.groupControls(this.controls, this.controlsPerRow);
-        if (!this.form) {
-
-            this.form = this.dynamicFormService.toFormGroup(this.controls, this.customControls,
-                this.groupValidators, this.formName, this.parent);
-            this.formCreated.emit(this.form);
-        }
+        this.groupedControls = this.groupingService.groupControls(this.groupControl);
 
         this.initValidation();
-        this.form.valueChanges
+        this.formGroup.valueChanges
             .pipe(debounceTime(300))
             .subscribe(data => this.onValueChanged(data));
 
@@ -117,9 +48,12 @@ export class DynamicFormComponent implements OnInit {
         this.onValueChanged(); // (re)set validation messages
     }
 
+    getControlErrors(key: string) {
+        return this.formErrors.find(error => error.controlKey === key);
+    }
 
     private initValidation() {
-        this.controls
+        this.groupControl.groupControls
             .forEach((control) => {
                 this.formErrors.push({
                     controlKey: control.key,
@@ -132,24 +66,17 @@ export class DynamicFormComponent implements OnInit {
             });
     }
 
-    onSubmit() {
-        this.formSubmit.emit(this.form);
-    }
-
-    onValueChanged(data?: any) {
-        if (!this.form) {
+    private onValueChanged(data?: any) {
+        if (!this.formGroup) {
             return;
         }
-        this.formErrors = this.validationService.updateFormErrors(this.form, this.formErrors, this.validationMessages);
-        this.disabledControls = this.relationService.handleRelations(this.form, this.controls, this.disabledControls);
+        this.formErrors = this.validationService.updateFormErrors(this.formGroup, this.formErrors, this.validationMessages);
+        // TODO possibly re-introduce relation service
+        // this.disabledControls = this.relationService.handleRelations(this.form, this.controls, this.disabledControls);
     }
 
-    getControlErrors(key: string) {
-        return this.formErrors.find(error => error.controlKey === key);
+    private bindDataToForm(value: any) {
+        this.formGroup.patchValue(value);
     }
 
-
-    bindDataToForm(value: any) {
-        this.form.patchValue(value);
-    }
 }
