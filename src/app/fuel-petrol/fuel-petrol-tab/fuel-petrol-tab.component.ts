@@ -1,7 +1,8 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {FormGroup} from '@angular/forms';
-import {GroupControl} from '../../dynamic-forms/controls/group-controll';
-import {ArrayControl} from '../../dynamic-forms/controls/array-control';
+
+import {DynamicFormService} from '../../dynamic-forms-new/dynamic-form/dynamic-form.service';
+import {GroupControl} from '../../dynamic-forms-new/controls/group-control';
 
 @Component({
     selector: 'fuel-petrol-tab',
@@ -17,21 +18,19 @@ export class FuelPetrolTabComponent implements OnInit {
     @Input() columns;
 
     constructor() {
-
+        console.log(this.petrolFormGroup);
     }
 
     ngOnInit() {
-
     }
 
     getBasicPetrolInfoControls() {
-        const basicPetrolInfoGroupControl = this.petrolGroupControl.groupControls
-            .find(control => control.key === 'basicPetrolInfo') as GroupControl;
-        return basicPetrolInfoGroupControl.groupControls;
+        return this.petrolGroupControl.groupControls
+            .find(control => control.key === 'basicPetrolInfo');
     }
 
-    getBasicPetrolInfoFormGroup() {
-        return this.petrolFormGroup.get('basicPetrolInfo');
+    getBasicPetrolInfoFormGroup(): FormGroup {
+        return this.petrolFormGroup.get('basicPetrolInfo') as FormGroup;
     }
 
     getBasicPetrolInfoValue() {

@@ -70,10 +70,9 @@ export class ReportingResultsComponent implements OnInit {
 
     }
 
-    filteredControls(key) {
-        const petrolControls = (this.controls.filter(control => control.key === key)[0] as GroupControl);
-        this.groupValidators = petrolControls.groupValidators;
-        return petrolControls.groupControls;
+    filteredGroupControl(key) {
+        let groupControl = (this.controls.filter(control => control.key === key)[0] as GroupControl);
+        return groupControl;
     }
 
     openReportingResultDialog($event) {

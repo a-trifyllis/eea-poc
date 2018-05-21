@@ -2,15 +2,15 @@ import {AfterViewInit, ChangeDetectorRef, Component, Input, OnInit} from '@angul
 import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
 import {Petrol} from './petrol';
 
-import {ArrayControl} from '../dynamic-forms/controls/array-control';
+import {ArrayControl} from '../dynamic-forms-new/controls/array-control';
 import {FuelPetrolService} from '../fuel-petrol/fuel-petrol.service';
-import {BaseControl} from '../dynamic-forms/controls/base-control';
 import {FuelPetrol} from '../fuel-data';
-import {GroupControl} from '../dynamic-forms/controls/group-controll';
 import {PetrolFormValidators} from './petrol-form-validators';
 import {FuelDataService} from '../fuel-data.service';
 import {ConfigService} from '../config.service';
-import {DynamicFormService} from '../dynamic-forms/dynamic-form/dynamic-form.service';
+import {DynamicFormService} from '../dynamic-forms-new/dynamic-form/dynamic-form.service';
+import {GroupControl} from '../dynamic-forms-new/controls/group-control';
+import {Observable} from 'rxjs/Observable';
 
 
 @Component({
@@ -21,15 +21,13 @@ import {DynamicFormService} from '../dynamic-forms/dynamic-form/dynamic-form.ser
 
 export class FuelPetrolComponent implements OnInit, AfterViewInit {
 
-    @Input() parentForm: FormGroup;
+    @Input() parentFormGroup: FormGroup;
 
     @Input() fuelPetrol: FuelPetrol;
 
+    fuelPetrolGroupControl: GroupControl;
+
     petrolFormGroup: FormGroup;
-
-    controls: BaseControl<string>[];
-
-    commonControls: BaseControl<string>[];
 
     petrolFormValidator: PetrolFormValidators;
 
@@ -40,6 +38,7 @@ export class FuelPetrolComponent implements OnInit, AfterViewInit {
     petrol: Petrol;
 
     selectedPetrolIndex: number;
+
     private defaultEmptyPetrols: Petrol[];
 
     constructor(private petrolService: FuelDataService,
@@ -53,12 +52,18 @@ export class FuelPetrolComponent implements OnInit, AfterViewInit {
 
     ngOnInit() {
         this.petrolFormValidator = new PetrolFormValidators(this.configService);
-        const allControls = this.fuelPetrolService.getControls();
-        this.controls = [allControls[0]];
-        this.commonControls = allControls.slice(1);
-        this.getPetrols();
+
+        this.fuelPetrolGroupControl = this.fuelPetrolService.getGroupControl();
+
         this.getColumns();
-        this.getReportResultTypes();
+        this.getReportResultTypes()
+            .subscribe((data: any[]) => {
+            this.reportResultTypes = data['reportResultTypes'];
+
+                this.getPetrols();
+                this.petrolFormGroup = this.dynamicFormService.toFormGroup(this.fuelPetrolGroupControl, this.parentFormGroup);
+
+            });
 
     }
 
@@ -74,16 +79,13 @@ export class FuelPetrolComponent implements OnInit, AfterViewInit {
         });
     }
 
-    getReportResultTypes(): void {
-        this.configService.getPetrolSettings()
-            .subscribe((data: any[]) => {
-                this.reportResultTypes = data['reportResultTypes'];
-            });
+    getReportResultTypes(): Observable<any> {
+        return this.configService.getPetrolSettings();
     }
 
     getPetrols(): void {
         let index = 0;
-        const array = this.parentForm.get('petrols') as FormArray;
+        const array = this.parentFormGroup.get('petrols') as FormArray;
 
         this.fuelPetrol.petrols.forEach(pp => {
             pp.id = 'Petrol ' + pp.id;
@@ -94,13 +96,9 @@ export class FuelPetrolComponent implements OnInit, AfterViewInit {
 
     }
 
-    retrievePetrolFormGroup(formGroup: FormGroup) {
-        this.petrolFormGroup = formGroup;
-    }
-
     createPetrolForm() {
-        const groupControl = this.fuelPetrolService.createPetrolGroupControl();
-        const petrolArray = (this.controls[0] as ArrayControl);
+        const groupControl = this.fuelPetrolService.createPetrolGroupControl(this.reportResultTypes);
+        const petrolArray = (this.fuelPetrolGroupControl.unrenderedControls[0] as ArrayControl);
         petrolArray.push(groupControl);
         this.selectedPetrolIndex = petrolArray.arrayControls.length - 1;
         return groupControl;
@@ -112,7 +110,7 @@ export class FuelPetrolComponent implements OnInit, AfterViewInit {
     }
 
     getPetrolGroupControl(index: number) {
-        const arrayControl = (this.controls[0] as ArrayControl);
+        const arrayControl = (this.fuelPetrolGroupControl.unrenderedControls[0] as ArrayControl);
         return arrayControl.arrayControls[index] as GroupControl;
     }
 
@@ -129,12 +127,13 @@ export class FuelPetrolComponent implements OnInit, AfterViewInit {
             this.fuelPetrol.petrols = [...this.fuelPetrol.petrols, newPetrol];
             const petrolGroupControl = this.createPetrolForm();
             // Manually create form group of new array element using explicitly the DynamicFormService.
-            // We pass the controls to the customControls parameter because we want all nested FormGroups to be created immediately
+            // We pass the controls to the unrenderedControls parameter because we want all nested FormGroups to be created immediately
             this.dynamicFormService.toFormGroup(
-                [],
-                petrolGroupControl.groupControls,
-                petrolGroupControl.groupValidators,
-                null,
+                new GroupControl({
+                    key: 'petrol ' + i,
+                    unrenderedControls: petrolGroupControl.groupControls,
+                    groupValidators: petrolGroupControl.groupValidators
+                }),
                 petrolsArray
             );
         }
@@ -146,7 +145,7 @@ export class FuelPetrolComponent implements OnInit, AfterViewInit {
         // TODO : the following removals should be implemented into a service
         const array = (this.petrolFormGroup.controls.petrols) as FormArray;
         array.controls.splice(petrolIndex - 2, 3);
-        const petrolArray = (this.controls[0] as ArrayControl);
+        const petrolArray = (this.fuelPetrolGroupControl.unrenderedControls[0]as ArrayControl);
         petrolArray.arrayControls.splice(petrolIndex - 2, 3);
     }
 

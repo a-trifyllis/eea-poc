@@ -40,7 +40,6 @@ export class AppComponent implements OnInit, AfterViewInit {
 
         this.parentGroupControl = new GroupControl({
             key: 'parentForm',
-            groupControls: [],
             showErrors: true,
             showNestedFormGroupErrors: true,
             groupValidators: this.topValidators

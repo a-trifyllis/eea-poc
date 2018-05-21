@@ -1,6 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {BaseControl} from '../../../dynamic-forms/controls/base-control';
-import { ValidatorFn } from '@angular/forms';
+import {GroupControl} from '../../../dynamic-forms-new/controls/group-control';
 
 @Component({
     selector: 'reporting-result',
@@ -9,16 +8,14 @@ import { ValidatorFn } from '@angular/forms';
 })
 export class ReportingResultComponent implements OnInit {
 
-    @Input() groupName: string;
-
-    @Input() controls: BaseControl<string>[];
-    @Input() groupValidators: ValidatorFn[] = [];
+    @Input() groupControl: GroupControl
 
     @Input() group: any;
 
     @Input() value: any;
 
     constructor() {
+        console.log(this.group);
     }
 
     ngOnInit() {
