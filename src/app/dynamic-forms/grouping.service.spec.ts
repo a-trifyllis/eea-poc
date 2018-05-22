@@ -72,7 +72,7 @@ describe('GroupingService', () => {
 
         it('should group correctly when controls contain group in the beginning', () => {
             const groupControl = new GroupControl({
-                key: 'testGroup',
+                    key: 'testGroup',
                     groupControls: [
                         new GroupControl({
                             key: 'testGroup1',

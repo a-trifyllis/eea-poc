@@ -136,7 +136,7 @@ export class ReportingResultsComponent implements OnInit {
 
     getInvalidRowStyleClass(rowData: any) {
         return this.group.controls[rowData.field].invalid &&
-                this.group.controls[rowData.field].dirty ? 'invalid-row' : null;
+        this.group.controls[rowData.field].dirty ? 'invalid-row' : null;
     }
 }
 

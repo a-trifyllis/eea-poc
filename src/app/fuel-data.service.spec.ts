@@ -1,5 +1,5 @@
 import {inject, TestBed} from '@angular/core/testing';
-import { FuelDataService } from './fuel-data.service';
+import {FuelDataService} from './fuel-data.service';
 
 
 xdescribe('PetrolService', () => {

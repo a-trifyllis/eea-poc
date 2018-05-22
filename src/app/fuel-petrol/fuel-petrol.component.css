@@ -3,7 +3,6 @@
     min-height: 200px;
 }
 
-
 /* DIALOG INPUT STYLES */
 
 /deep/ .font-style-85em label {
@@ -26,7 +25,6 @@
 :host /deep/ .ui-tabview > .ui-tabview-nav {
     padding-left: 0;
 }
-
 
 :host /deep/ .ui-tabview .ui-tabview-nav > li.ui-state-active {
     top: 2px;

@@ -27,9 +27,9 @@ import {FuelPetrolService} from './fuel-petrol/fuel-petrol.service';
 import {FuelPetrolTabComponent} from './fuel-petrol/fuel-petrol-tab/fuel-petrol-tab.component';
 import {FuelDataService} from './fuel-data.service';
 import {ConfigService} from './config.service';
-import { HotTableModule } from '@handsontable/angular';
+import {HotTableModule} from '@handsontable/angular';
 import {ReportingResultsService} from './fuel-petrol/reporting-results/reporting-results.service';
-import { EditableTableComponent } from './editable-table/editable-table.component';
+import {EditableTableComponent} from './editable-table/editable-table.component';
 import {DynamicFormsModule} from './dynamic-forms/dynamic-forms.module';
 
 @NgModule({

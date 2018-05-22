@@ -58,7 +58,7 @@ export class FuelPetrolComponent implements OnInit, AfterViewInit {
         this.getColumns();
         this.getReportResultTypes()
             .subscribe((data: any[]) => {
-            this.reportResultTypes = data['reportResultTypes'];
+                this.reportResultTypes = data['reportResultTypes'];
 
                 this.getPetrols();
                 this.petrolFormGroup = this.dynamicFormService.toFormGroup(this.fuelPetrolGroupControl, this.parentFormGroup);

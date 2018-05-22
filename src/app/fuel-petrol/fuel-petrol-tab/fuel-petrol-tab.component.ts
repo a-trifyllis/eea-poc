@@ -1,7 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {FormGroup} from '@angular/forms';
-
-import {DynamicFormService} from '../../dynamic-forms/dynamic-form/dynamic-form.service';
 import {GroupControl} from '../../dynamic-forms/controls/group-control';
 
 @Component({
@@ -37,7 +35,7 @@ export class FuelPetrolTabComponent implements OnInit {
     }
 
     getReportingResultsControls() {
-       return this.petrolGroupControl.groupControls;
+        return this.petrolGroupControl.groupControls;
     }
 
     getSamplingFrequencyGroupControl() {

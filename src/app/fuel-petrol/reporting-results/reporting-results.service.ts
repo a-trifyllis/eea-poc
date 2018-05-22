@@ -1,11 +1,12 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {ReportingResultType} from './reporting-result-type';
 import {Column} from '../../fuel-settings';
 
 @Injectable()
 export class ReportingResultsService {
 
-  constructor() { }
+    constructor() {
+    }
 
     /**
      * The data model is coming in the form of an object whereas the table expects an array of objects to render the rows.
