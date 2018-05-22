@@ -18,16 +18,36 @@ export class DynamicFormComponent implements OnInit {
     // https://stackoverflow.com/questions/42464367/angular2-use-enum-value-in-html-value-attribute/
     ControlType = ControlType;
 
-    @Input() formGroup: FormGroup;
-
+    /**
+     * The GroupControl containing the controls that are used to create the FormGroup.
+     */
     @Input() groupControl: GroupControl;
 
+    /**
+     * The FormGroup created by the DynamicFormService using the GroupControl above.
+     */
+    @Input() formGroup: FormGroup;
+
+    /**
+     * The value object for the specific FormGroup
+     */
     @Input() value: any;
 
+    /**
+     * The original controls grouped by row (according to the controlsByRow property of the GroupControl
+     */
     groupedControls: BaseControl[][];
 
+    /**
+     * The errors (if any) for the specific FormGroup.
+     * @type {any[]}
+     */
     formErrors: FormError[] = [];
 
+    /**
+     * All the validation messages for each possible error for the specific FormGroup.
+     * @type {any[]}
+     */
     validationMessages: ValidationErrorMessage[] = [];
 
     constructor(private groupingService: GroupingService, private validationService: ValidationService) {
@@ -37,6 +57,7 @@ export class DynamicFormComponent implements OnInit {
         if (!this.formGroup || !this.groupControl) {
             return;
         }
+
         this.groupedControls = this.groupingService.groupControls(this.groupControl);
 
         this.initValidation();
@@ -48,7 +69,7 @@ export class DynamicFormComponent implements OnInit {
             this.bindDataToForm(this.value);
         }
 
-        this.onValueChanged(); // (re)set validation messages
+        this.onValueChanged(); // (re)set validation errors
     }
 
     getControlErrors(key: string) {

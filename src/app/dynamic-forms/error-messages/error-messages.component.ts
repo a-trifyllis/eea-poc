@@ -24,6 +24,7 @@ export class ErrorMessagesComponent implements OnInit {
         this.relatedFormGroup.valueChanges
             .pipe(debounceTime(300))
             .subscribe(value => this.errorMessages = this.getErrorMessages());
+
         this.errorMessages = this.getErrorMessages();
     }
 
@@ -34,13 +35,6 @@ export class ErrorMessagesComponent implements OnInit {
         }
         allErrors.push(...this.getErrors(this.relatedFormGroup));
         return allErrors;
-    }
-
-    private getErrors(form: FormGroup): Message[] {
-        if (form.errors) {
-            return Object.keys(form.errors)
-                .map(keyError => this.createErrorMessage(form, keyError));
-        }
     }
 
     private retrieveChildErrors(errors: Message[], formGroup: FormGroup): Message[] {
@@ -56,12 +50,18 @@ export class ErrorMessagesComponent implements OnInit {
         return errors;
     }
 
+    private getErrors(form: FormGroup): Message[] {
+        if (form.errors) {
+            return Object.keys(form.errors)
+                .map(keyError => this.createErrorMessage(form, keyError));
+        }
+    }
+
     private createErrorMessage(form: FormGroup, keyError): Message {
         return {
             severity: 'error',
-            summary: 'Validation for: '  + keyError + ' failed.',
+            summary: 'Validation for: ' + keyError + ' failed.',
             detail: 'Error Message: ' + form.errors[keyError]
         };
     }
-
 }

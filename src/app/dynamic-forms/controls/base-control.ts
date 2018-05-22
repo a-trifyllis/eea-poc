@@ -17,8 +17,8 @@ export enum ControlType {
 
 export class BaseControl {
     controlType: ControlType;
-    value: any;
     key: string;
+    value: any;
     label: string;
 
     validators: ValidatorConfig[];

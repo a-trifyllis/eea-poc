@@ -11,6 +11,17 @@ export class DynamicFormService {
     constructor() {
     }
 
+    /**
+     * Creates an Angular reactive FormGroup given the dynamic GroupControl.
+     *
+     * Uses both groupControls and unrenderedControls to create the FormGroup controls.
+     * Handles FormControls, nested FormGroups and FormArrays.
+     * Also adds the created FormGroup to its parent (if provided).
+     *
+     * @param {GroupControl} groupControl
+     * @param {FormGroup | FormArray} parent
+     * @returns {FormGroup}
+     */
     toFormGroup(groupControl: GroupControl, parent?: FormGroup | FormArray): FormGroup {
         const newGroup: any = {};
 
@@ -29,6 +40,15 @@ export class DynamicFormService {
         return newFormGroup;
     }
 
+    /**
+     * Creates an Angular reactive FormArray given the dynamic ArrayControl.
+     *
+     * Uses both groupControls and unrenderedControls to create the FormGroup controls.
+     * Handles FormControls, nested FormGroups and FormArrays.
+     *
+     * @param {ArrayControl} arrayControl
+     * @returns {FormArray}
+     */
     toFormArray(arrayControl: ArrayControl) {
         const formArray = new FormArray([], arrayControl.arrayValidators);
 

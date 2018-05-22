@@ -2,6 +2,7 @@ import {BaseControl, BaseControlOptions, ControlType} from './base-control';
 
 export class CalendarControl extends BaseControl {
     controlType = ControlType.CALENDAR;
+
     dateFormat: string;
     showIcon: boolean;
 

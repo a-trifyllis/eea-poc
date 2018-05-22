@@ -69,24 +69,16 @@ export class ValidationService {
     updateFormErrors(form: FormGroup, formErrors: FormError[], validationMessages: ValidationErrorMessage[]): FormError[] {
         formErrors.map(formError => formError.controlKey)
             .map(field => {
-                // clear previous error message (if any)
-                const fieldFormErrors = formErrors.find(error => error.controlKey === field);
-                fieldFormErrors.errors = [];
+                const fieldFormErrors = this.clearPreviousErrors(formErrors, field);
                 const fieldMessages = validationMessages.find(v => v.controlKey === field).validationTuple;
                 const control = form.get(field);
-                if (!(control instanceof FormGroup) && !(control instanceof FormArray) && this.isControlInvalid(control)) {
+
+                if (this.isControlInvalid(control)) {
                     Object.keys(control.errors).map(errorName => {
                         fieldFormErrors.errors.push(fieldMessages.find(m => m.errorKey === errorName));
                     });
                 }
             });
-        // TODO form (not field) errors
-        // if (form && form.dirty && !form.valid && form.errors) {
-        //     Object.keys(form.errors).map(key => {
-        //         const messages = defaultValidationMessages[key];
-        //         this.formErrors[key] += messages[form.errors[key]] + ' ';
-        //     });
-        // }
         return formErrors;
     }
 
@@ -95,7 +87,18 @@ export class ValidationService {
         return !!key.validationMessage ? key.validationMessage : defaultValidationMessages[key.errorKey];
     }
 
+    private clearPreviousErrors(formErrors: FormError[], field) {
+        const fieldFormErrors = formErrors.find(error => error.controlKey === field);
+        fieldFormErrors.errors = [];
+        return fieldFormErrors;
+    }
+
     private isControlInvalid(control: AbstractControl) {
-        return control && control.dirty && !control.valid && control.enabled;
+        return control &&
+            !(control instanceof FormGroup) &&
+            !(control instanceof FormArray) &&
+            control.dirty &&
+            !control.valid &&
+            control.enabled;
     }
 }
