@@ -1,7 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {FormGroup} from '@angular/forms';
-import {GroupControl} from '../../dynamic-forms/controls/group-controll';
-import {ArrayControl} from '../../dynamic-forms/controls/array-control';
+import {GroupControl} from '../../dynamic-forms/controls/group-control';
 
 @Component({
     selector: 'fuel-petrol-tab',
@@ -17,21 +16,18 @@ export class FuelPetrolTabComponent implements OnInit {
     @Input() columns;
 
     constructor() {
-
     }
 
     ngOnInit() {
-
     }
 
     getBasicPetrolInfoControls() {
-        const basicPetrolInfoGroupControl = this.petrolGroupControl.groupControls
-            .find(control => control.key === 'basicPetrolInfo') as GroupControl;
-        return basicPetrolInfoGroupControl.groupControls;
+        return this.petrolGroupControl.groupControls
+            .find(control => control.key === 'basicPetrolInfo');
     }
 
-    getBasicPetrolInfoFormGroup() {
-        return this.petrolFormGroup.get('basicPetrolInfo');
+    getBasicPetrolInfoFormGroup(): FormGroup {
+        return this.petrolFormGroup.get('basicPetrolInfo') as FormGroup;
     }
 
     getBasicPetrolInfoValue() {
@@ -39,12 +35,12 @@ export class FuelPetrolTabComponent implements OnInit {
     }
 
     getReportingResultsControls() {
-       return this.petrolGroupControl.groupControls;
+        return this.petrolGroupControl.groupControls;
     }
 
-    getSamplingFrequencyControls() {
-        const sampleFrequencyGroupControl = this.petrolGroupControl.groupControls
+    getSamplingFrequencyGroupControl() {
+        return this.petrolGroupControl.groupControls
             .find(control => control.key === 'sampleFrequency') as GroupControl;
-        return sampleFrequencyGroupControl.groupControls;
+
     }
 }

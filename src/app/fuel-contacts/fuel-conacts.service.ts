@@ -1,15 +1,15 @@
 import {Injectable} from '@angular/core';
 
 import {AbstractControl, ValidatorFn, Validators} from '@angular/forms';
-import {AutocompleteControl} from '../dynamic-forms/controls/autocomplete-control';
 import {Observable} from 'rxjs/Observable';
 import {Country} from './country';
 import {HttpClient} from '@angular/common/http';
-import {TextboxControl} from '../dynamic-forms/controls/textbox-control';
 import {BaseControl} from '../dynamic-forms/controls/base-control';
-import {NestedFormData} from '../fuel-data';
-import {GroupControl} from '../dynamic-forms/controls/group-controll';
-import { CalendarControl } from '../dynamic-forms/controls/calendar-control';
+import {AutocompleteControl} from '../dynamic-forms/controls/autocomplete-control';
+import {CalendarControl} from '../dynamic-forms/controls/calendar-control';
+import {GroupControl} from '../dynamic-forms/controls/group-control';
+import {TextBoxControl} from '../dynamic-forms/controls/textbox-control';
+
 
 @Injectable()
 export class FuelContactsService {
@@ -23,19 +23,18 @@ export class FuelContactsService {
             });
     }
 
-    getControls(): BaseControl<any>[] {
+    getControls(): BaseControl[] {
 
-        const controls: BaseControl<any>[] = [
+        return [
 
             new AutocompleteControl({
                 key: 'country',
                 label: 'Country',
-                order: 1,
                 suggestions: this.filteredCountries,
                 searchFn: this.searchCountries,
                 suggestionField: 'name',
                 validators: [
-                    {formError: 'required', validator: Validators.required},
+                    {errorKey: 'required', validator: Validators.required},
                 ]
 
             }),
@@ -43,51 +42,44 @@ export class FuelContactsService {
             new CalendarControl({
                 key: 'dateReportCompleted',
                 label: 'Date Report Completed',
-                order: 2,
                 dateFormat: 'dd/mm/y',
                 showIcon: true
             }),
 
 
-
             new GroupControl({
                 key: 'organisationAddress',
-                order: 4,
                 controlsPerRow: 2,
                 groupControls: [
-                    new TextboxControl({
+                    new TextBoxControl({
                         key: 'organisationResponsibleForReport',
                         label: 'Organisation',
-                        order: 3,
                         validators: [
                             {
-                                formError: 'required',
+                                errorKey: 'required',
                                 validator: Validators.required
                             },
                             {
-                                formError: 'forbiddenName',
+                                errorKey: 'forbiddenName',
                                 validator: forbiddenNameValidator(/EEA/i),
                                 validationMessage: 'Organisation responsible for report cannot be EEA'
                             }
                         ]
                     }),
-                    new TextboxControl({
+                    new TextBoxControl({
                         key: 'address',
                         label: 'Address Of Organisation Street',
-                        order: 1
                     }),
-                    new TextboxControl({
+                    new TextBoxControl({
                         key: 'city',
                         label: 'City',
-                        order: 2
                     }),
-                    new TextboxControl({
+                    new TextBoxControl({
                         key: 'postCode',
                         label: 'Post Code',
-                        order: 3,
                         validators: [
                             {
-                                formError: 'minlength',
+                                errorKey: 'minlength',
                                 validator: Validators.minLength(5),
                                 validationMessage: 'Minimum length is 5'
                             }
@@ -98,37 +90,31 @@ export class FuelContactsService {
 
             new GroupControl({
                 key: 'personInfo',
-                order: 6,
                 controlsPerRow: 2,
                 groupControls: [
-                    new TextboxControl({
+                    new TextBoxControl({
                         key: 'personResponsibleForReport',
                         label: 'Person Responsible for Report',
-                        order: 5
                     }),
-                    new TextboxControl({
+                    new TextBoxControl({
                         key: 'telephoneNumber',
                         label: 'Telephone Number',
-                        order: 1
                     }),
 
-                    new TextboxControl({
+                    new TextBoxControl({
                         key: 'email',
                         label: 'Email',
                         validators: [
                             {
-                                formError: 'email',
+                                errorKey: 'email',
                                 validator: Validators.email
                             }
                         ],
-                        order: 2
                     })
                 ]
             })
 
         ];
-
-        return controls.sort((a, b) => a.order - b.order);
     }
 
     getCountries(): Observable<Country[]> {

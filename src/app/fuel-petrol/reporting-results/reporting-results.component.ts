@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {BaseControl} from '../../dynamic-forms/controls/base-control';
-import {GroupControl} from '../../dynamic-forms/controls/group-controll';
+import {GroupControl} from '../../dynamic-forms/controls/group-control';
 import {FormGroup, ValidatorFn} from '@angular/forms';
 
 import {ReportingResultType} from './reporting-result-type';
@@ -19,7 +19,7 @@ export class ReportingResultsComponent implements OnInit {
 
     @Input() reportResultTypes: ReportingResultType[];
 
-    @Input() controls: BaseControl<string>[];
+    @Input() controls: BaseControl[];
 
     @Input() group: FormGroup;
 
@@ -70,10 +70,8 @@ export class ReportingResultsComponent implements OnInit {
 
     }
 
-    filteredControls(key) {
-        const petrolControls = (this.controls.filter(control => control.key === key)[0] as GroupControl);
-        this.groupValidators = petrolControls.groupValidators;
-        return petrolControls.groupControls;
+    filteredGroupControl(key) {
+        return (this.controls.filter(control => control.key === key)[0] as GroupControl);
     }
 
     openReportingResultDialog($event) {
@@ -94,6 +92,8 @@ export class ReportingResultsComponent implements OnInit {
 
     close() {
         this.displayDialog = false;
+        // reset FormGroup value to initial
+        this.group.get(this.selectedReportingResult).patchValue(this.value[this.selectedReportingResult]);
     }
 
 
@@ -136,7 +136,7 @@ export class ReportingResultsComponent implements OnInit {
 
     getInvalidRowStyleClass(rowData: any) {
         return this.group.controls[rowData.field].invalid &&
-                this.group.controls[rowData.field].dirty ? 'invalid-row' : null;
+        this.group.controls[rowData.field].dirty ? 'invalid-row' : null;
     }
 }
 

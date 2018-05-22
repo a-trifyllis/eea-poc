@@ -1,4 +1,4 @@
-import {AbstractControl, FormArray, FormControl, FormGroup} from '@angular/forms';
+import {AbstractControl, FormArray, FormGroup} from '@angular/forms';
 import {ConfigService} from '../config.service';
 
 export class PetrolFormValidators {

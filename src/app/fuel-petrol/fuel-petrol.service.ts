@@ -2,15 +2,16 @@ import {Injectable} from '@angular/core';
 
 
 import {ArrayControl} from '../dynamic-forms/controls/array-control';
-import {TextboxControl} from '../dynamic-forms/controls/textbox-control';
-import {GroupControl} from '../dynamic-forms/controls/group-controll';
-import {BaseControl, ControlType} from '../dynamic-forms/controls/base-control';
+import {TextBoxControl} from '../dynamic-forms/controls/textbox-control';
+import {GroupControl} from '../dynamic-forms/controls/group-control';
+import {BaseControl} from '../dynamic-forms/controls/base-control';
 import {Validators} from '@angular/forms';
 
 import {AutocompleteControl} from '../dynamic-forms/controls/autocomplete-control';
-import { NumberControl } from '../dynamic-forms/controls/number-control';
+import {NumberControl} from '../dynamic-forms/controls/number-control';
 import {PetrolFormValidators} from './petrol-form-validators';
 import {ConfigService} from '../config.service';
+import {ReportingResultType} from './reporting-results/reporting-result-type';
 
 @Injectable()
 export class FuelPetrolService {
@@ -30,40 +31,43 @@ export class FuelPetrolService {
     }
 
 
-    getControls(): BaseControl<string>[] {
-        const controls: BaseControl<string>[] = [
-            new ArrayControl({
-                key: 'petrols',
-                arrayControls: []
-            }),
-            new TextboxControl({
-                key: 'country',
-                label: 'Country',
-                validators: [
-                    {
-                        formError: 'required',
-                        validator: Validators.required,
-                        validationMessage: 'Petrol Country required'
-                    }
-                ],
-                disabled: () => true
-            }),
-            new TextboxControl({
-                key: 'reportingYear',
-                label: 'Reporting Year',
-                disabled: () => true
-            }),
-            new TextboxControl({
-                key: 'nationalFuelGrade',
-                label: 'National Fuel Grade',
-            }),
-        ];
-
-        // controls.sort((a, b) => a.order - b.order);
-        return controls;
+    getGroupControl(): GroupControl {
+        return new GroupControl({
+            key: 'petrol',
+            groupControls: [
+                new TextBoxControl({
+                    key: 'country',
+                    label: 'Country',
+                    validators: [
+                        {
+                            errorKey: 'required',
+                            validator: Validators.required,
+                            validationMessage: 'Petrol Country required'
+                        }
+                    ],
+                    disabled: () => true
+                }),
+                new TextBoxControl({
+                    key: 'reportingYear',
+                    label: 'Reporting Year',
+                    disabled: () => true
+                }),
+                new TextBoxControl({
+                    key: 'nationalFuelGrade',
+                    label: 'National Fuel Grade',
+                }),
+            ],
+            unrenderedControls: [
+                new ArrayControl({
+                    key: 'petrols',
+                    arrayControls: []
+                })
+            ],
+            controlsPerRow: 3
+        });
     }
 
-    createPetrolGroupControl(): GroupControl {
+    createPetrolGroupControl(reportResultTypes): GroupControl {
         return new GroupControl({
             key: 'petrol',
             groupValidators: [
@@ -79,144 +83,83 @@ export class FuelPetrolService {
                     ],
                     groupControls: [
 
-                        new TextboxControl({
+                        new TextBoxControl({
                             key: 'period',
                             label: 'Period',
                             labelCssClasses: ['ui-g-4 ui-sm-6'],
                             disabled: () => true
                         }),
-                        new TextboxControl({
+                        new TextBoxControl({
                             key: 'parentFuelGrade',
                             label: 'Parent Fuel Grade',
                             labelCssClasses: ['ui-g-4 ui-sm-6'],
                             disabled: () => true
                         }),
-                        new TextboxControl({
+                        new TextBoxControl({
                             key: 'summerPeriodNorA',
                             label: 'Summer Period',
                             labelCssClasses: ['ui-g-4 ui-sm-6']
                         }),
-                        new TextboxControl({
+                        new TextBoxControl({
                             key: 'maximumBioethanolContent',
                             label: 'Max Bioethanol Content',
                             labelCssClasses: ['ui-g-4 ui-sm-6']
                         })
-                    ]
+                    ],
+                    showErrors: true,
+                    controlsPerRow: 3
                 }),
-
-                new GroupControl({
-                    key: 'researchOctaneNumber',
-                    groupControls: this.getReportResultGroup(),
-                    groupValidators: [this.petrolFormValidator.minMaxValidation()]
-                }),
-                new GroupControl({
-                    key: 'motorOctaneNumber',
-                    groupControls: this.getReportResultGroup(),
-                    groupValidators: [this.petrolFormValidator.minMaxValidation()]
-                }),
-                new GroupControl({
-                    key: 'vapourPressure',
-                    groupControls: this.getReportResultGroup()
-                }),
-                new GroupControl({
-                    key: 'distillationEvaporated100',
-                    groupControls: this.getReportResultGroup()
-                }),
-                new GroupControl({
-                    key: 'distillationEvaporated150',
-                    groupControls: this.getReportResultGroup()
-                }),
-                new GroupControl({
-                    key: 'hydrocarbonOlefins',
-                    groupControls: this.getReportResultGroup()
-                }),
-                new GroupControl({
-                    key: 'hydrocarbonAromatics',
-                    groupControls: this.getReportResultGroup()
-                }),
-                new GroupControl({
-                    key: 'hydrocarbonBenzene',
-                    groupControls: this.getReportResultGroup()
-                }),
-                new GroupControl({
-                    key: 'oxygenContent',
-                    groupControls: this.getReportResultGroup()
-                }),
-                new GroupControl({
-                    key: 'oxygenContent2',
-                    groupControls: this.getReportResultGroup()
-                }),
-                new GroupControl({
-                    key: 'methanol',
-                    groupControls: this.getReportResultGroup()
-                }),
-                new GroupControl({
-                    key: 'ethanol',
-                    groupControls: this.getReportResultGroup()
-                }),
-                new GroupControl({
-                    key: 'isoPropylAlcohol',
-                    groupControls: this.getReportResultGroup()
-                }),
-                new GroupControl({
-                    key: 'tertButylAlcohol',
-                    groupControls: this.getReportResultGroup()
-                }),
-                new GroupControl({
-                    key: 'isoButylAlcohol',
-                    groupControls: this.getReportResultGroup()
-                }),
-                new GroupControl({
-                    key: 'ethers',
-                    groupControls: this.getReportResultGroup()
-                }),
-                new GroupControl({
-                    key: 'sulphurContent',
-                    groupControls: this.getReportResultGroup()
-                }),
-                new GroupControl({
-                    key: 'leadContent',
-                    groupControls: this.getReportResultGroup()
-                }),
-                new GroupControl({
-                    key: 'manganese',
-                    groupControls: this.getReportResultGroup()
-                }),
-                new GroupControl({
-                    key: 'sampleFrequency',
-                    groupControls: this.getSampleFrequencyControls()
-                })
-
             ]
+                .concat(this.getReportingResultGroups(reportResultTypes))
+                .concat(new GroupControl({
+                    key: 'sampleFrequency',
+                    groupControls: this.getSampleFrequencyControls(),
+                    controlsPerRow: 3
+                }))
         });
     }
 
-    getReportResultGroup(): BaseControl<string>[] {
+    getReportingResultGroups(reportResultTypes: ReportingResultType[]): GroupControl[] {
+        const reportingResultGroupControls: GroupControl[] = [];
+        reportResultTypes
+            .map(type => type.field)
+            .forEach(key => reportingResultGroupControls.push(new GroupControl({
+                key: key,
+                groupControls: this.getReportResultGroup(),
+                groupValidators: [this.petrolFormValidator.minMaxValidation()],
+                showErrors: true,
+                controlsPerRow: 3
+            })));
+        return reportingResultGroupControls;
+    }
+
+    getReportResultGroup(): BaseControl[] {
         return [
-            new TextboxControl({controlType: ControlType.TEXT, key: 'unit', label: 'Unit', disabled: () => true}),
-            new TextboxControl({
-                controlType: ControlType.TEXT,
+            new TextBoxControl({
+                key: 'unit', label: 'Unit', disabled: () => true
+            }),
+            new TextBoxControl({
                 key: 'numOfSamples', label: 'Number Of Samples',
                 validators: [
                     {
-                        formError: 'required',
+                        errorKey: 'required',
                         validator: Validators.required,
                         validationMessage: 'num of samples'
                     }]
             }),
-            new TextboxControl({key: 'min', label: 'Min'}),
-            new TextboxControl({key: 'max', label: 'Max'}),
-            new TextboxControl({key: 'median', label: 'Median'}),
-            new TextboxControl({key: 'mean', label: 'Mean'}),
-            new TextboxControl({key: 'standardDeviation', label: 'Standard Deviation'}),
-            new TextboxControl({key: 'toleranceLimit', label: 'Tolerance Limit'}),
-            new TextboxControl({key: 'sampleValue25', label: '25% of Sample Value'}),
-            new TextboxControl({key: 'sampleValue75', label: '75% of Sample Value'}),
-            new TextboxControl({key: 'nationalMin', label: 'National Min'}),
-            new TextboxControl({key: 'nationalMax', label: 'National Max'}),
-            new TextboxControl({key: 'directiveMin', label: 'Directive Min', disabled: () => true}),
-            new TextboxControl({key: 'directiveMax', label: 'Directive Max', disabled: () => true}),
-            new TextboxControl({key: 'method', label: 'Method', disabled: () => true}),
+            new TextBoxControl({key: 'min', label: 'Min'}),
+            new TextBoxControl({key: 'max', label: 'Max'}),
+            new TextBoxControl({key: 'median', label: 'Median'}),
+            new TextBoxControl({key: 'mean', label: 'Mean'}),
+            new TextBoxControl({key: 'standardDeviation', label: 'Standard Deviation'}),
+            new TextBoxControl({key: 'toleranceLimit', label: 'Tolerance Limit'}),
+            new TextBoxControl({key: 'sampleValue25', label: '25% of Sample Value'}),
+            new TextBoxControl({key: 'sampleValue75', label: '75% of Sample Value'}),
+            new TextBoxControl({key: 'nationalMin', label: 'National Min'}),
+            new TextBoxControl({key: 'nationalMax', label: 'National Max'}),
+            new TextBoxControl({key: 'directiveMin', label: 'Directive Min', disabled: () => true}),
+            new TextBoxControl({key: 'directiveMax', label: 'Directive Max', disabled: () => true}),
+            new TextBoxControl({key: 'method', label: 'Method', disabled: () => true}),
             new AutocompleteControl({
                 key: 'date', label: 'Date',
                 suggestions: this.filteredYears,
@@ -227,7 +170,7 @@ export class FuelPetrolService {
         ];
     }
 
-    getSampleFrequencyControls(): BaseControl<string>[] {
+    getSampleFrequencyControls(): BaseControl[] {
         return [
             new NumberControl({key: 'Jan', label: 'January'}),
             new NumberControl({key: 'Feb', label: 'February'}),
@@ -241,7 +184,7 @@ export class FuelPetrolService {
             new NumberControl({key: 'Oct', label: 'October'}),
             new NumberControl({key: 'Nov', label: 'November'}),
             new NumberControl({key: 'Dec', label: 'December'}),
-            new TextboxControl({key: 'totalMonthValue', label: 'Total Month Samples', disabled: () => true})
+            new TextBoxControl({key: 'totalMonthValue', label: 'Total Month Samples', disabled: () => true})
         ];
     }
 

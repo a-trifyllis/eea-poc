@@ -1,8 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {FormGroup} from '@angular/forms';
-import { BaseControl } from '../../dynamic-forms/controls/base-control';
-import { TextboxControl } from '../../dynamic-forms/controls/textbox-control';
-import { GroupControl } from '../../dynamic-forms/controls/group-controll';
+import {GroupControl} from '../../dynamic-forms/controls/group-control';
 
 @Component({
     selector: 'sample-frequency',
@@ -11,45 +8,40 @@ import { GroupControl } from '../../dynamic-forms/controls/group-controll';
 })
 export class SampleFrequencyComponent implements OnInit {
 
-    groupName: string;
-    monthsArray: string[];
-
-    @Input() controls: BaseControl<string>[];
+    @Input() groupControl: GroupControl;
 
     @Input() group: any;
 
     @Input() value: any;
 
-    constructor() {
-        this.groupName = 'sampleFrequency';
+    monthsArray: string[];
 
+    constructor() {
         this.monthsArray = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     }
 
     ngOnInit() {
         this.monthsArray.forEach(m => {
-            if (this.group.controls.sampleFrequency.controls[m]) {
-                this.group.controls.sampleFrequency.controls[m].valueChanges
-                .subscribe(data => this.onChanges(m, data));
+            if (this.group.controls[m]) {
+                this.group.controls[m].valueChanges
+                    .subscribe(data => this.onChanges(m, data));
             }
         });
     }
 
 
     onChanges(month: string, monthValue: any) {
-        // tslint:disable-next-line:radix
         let totalMonthValue = 0;
         this.monthsArray.filter(m => m !== month).forEach(m => {
-            totalMonthValue +=  this.getNumber(this.group.controls.sampleFrequency.controls[m].value);
+            totalMonthValue += this.getNumber(this.group.controls[m].value);
         });
-        totalMonthValue +=  this.getNumber(monthValue);
-        this.group.controls.sampleFrequency.controls['totalMonthValue'].setValue(totalMonthValue);
+        totalMonthValue += this.getNumber(monthValue);
+        this.group.controls['totalMonthValue'].setValue(totalMonthValue);
     }
 
 
     getNumber(monthValue: any) {
-        // tslint:disable-next-line:radix
-        return isNaN(parseInt(monthValue)) ? 0 : parseInt(monthValue);
+        return isNaN(parseInt(monthValue, 10)) ? 0 : parseInt(monthValue, 10);
     }
 }
 

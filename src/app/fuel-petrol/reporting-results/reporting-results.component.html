@@ -19,9 +19,9 @@
 </div>
 
 
-
-<p-table *ngIf="!renderHot"  [columns]="cols" [value]="rows" selectionMode="single" (onRowSelect)="openReportingResultDialog($event)"
-[responsive]="true">
+<p-table *ngIf="!renderHot" [columns]="cols" [value]="rows" selectionMode="single"
+         (onRowSelect)="openReportingResultDialog($event)"
+         [responsive]="true">
     <ng-template pTemplate="header" let-columns>
         <tr>
             <th rowspan="2" colspan="10">
@@ -53,7 +53,7 @@
     </ng-template>
     <ng-template pTemplate="body" let-rowData let-columns="columns" let-rowIndex="rowIndex">
         <tr [pSelectableRow]="rowData" [ngClass]="getInvalidRowStyleClass(rowData)">
-            <td *ngFor="let col of columns" >
+            <td *ngFor="let col of columns">
                 {{rowData[col.field]}}
             </td>
         </tr>
@@ -70,14 +70,12 @@
         {{selectedReportingResultHeader}}
     </p-header>
 
-    <error-messages [relatedForm]="group">
+    <error-messages [relatedFormGroup]="group">
 
     </error-messages>
 
-    <reporting-result [group]="group"
-                      [groupName]="selectedReportingResult"
-                      [controls]="filteredControls(selectedReportingResult)"
-                      [groupValidators]="groupValidators"
+    <reporting-result [groupControl]="filteredGroupControl(selectedReportingResult)"
+                      [group]="group.get(selectedReportingResult)"
                       [value]="value ? value[selectedReportingResult] : ''">
 
     </reporting-result>
@@ -85,8 +83,10 @@
     <p-footer>
         <div class="ui-g">
             <div class="ui-g-12">
-                <button type="button" pButton label="Save" icon="fa-check" (click)="save(selectedReportingResult)"></button>
-                <button type="button" pButton label="Close" icon="fa-times" (click)="close()" class="ui-button-secondary"></button>
+                <button type="button" pButton label="Save" icon="fa-check"
+                        (click)="save(selectedReportingResult)"></button>
+                <button type="button" pButton label="Close" icon="fa-times" (click)="close()"
+                        class="ui-button-secondary"></button>
             </div>
         </div>
 
