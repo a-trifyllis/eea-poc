@@ -7,13 +7,17 @@ This module is also inspired from the already heavily developed [ng-dynamic-form
   * [Basic Usage](#basic-usage)
     + [1. Import module](#1-import-module)
     + [2. Define the form dynamic controls](#2-define-the-form-dynamic-controls)
+    + [3. Add a DynamicFormComponent to your template](#3-add-a-dynamicformcomponent-to-your-template)
   * [DynamicFormComponent input properties](#dynamicformcomponent-input-properties)
   * [DynamicFormComponent output properties](#dynamicformcomponent-output-properties)
   * [Form Groups](#form-groups)
-  * [Custom (rendered) controls](#custom--rendered--controls)
+  * [Unrendered controls](#unrendered-controls)
   * [Form Arrays](#form-arrays)
     + [Rendering](#rendering)
   * [Validation](#validation)
+    + [Setting up validators](#setting-up-validators)
+    + [Showing validation errors](#showing-validation-errors)
+    + [Marking tabs as invalid](#marking-tabs-as-invalid)
 
 ## Basic Usage
 
@@ -42,7 +46,7 @@ At the time of writing the following type of dynamic controls are supported:
 * AutocompleteControl
 * CalendarControl
 * GroupControl
-* TextboxControl
+* TextBoxControl
 
 These controls all extend from a BaseControl (which defines some generic configuration options, e.g. 'label')
 These classes define their control-specific options and they are all rendered using PrimeNG components.
@@ -67,7 +71,7 @@ const formGroup = this.dynamicFormService.toFormGroup(groupControl);
 NOTE: The `toFormGroup` method takes a second optional FormGroup parameter `parent` 
 in case we need the new FormGroup to be added as a control to a parent FormGroup.
 
-~ 3. Add a DynamicFormComponent to your template
+### 3. Add a DynamicFormComponent to your template
 
 For the simple example above you just need to add the dynamic form component to your template referencing the groupControl and the FormGroup:
 
@@ -81,7 +85,7 @@ This will render the text-box in your page.
 
 ## DynamicFormComponent input properties
 
-The following properties can be passed to the dynamic form component (besides 'groupControl' and 'formGroup''):
+The following properties can be passed to the dynamic form component (besides `groupControl` and `formGroup`):
 
 * `value`: The part of the data model that should be binded to the form (if applicable)
 
@@ -112,13 +116,13 @@ new GroupControl({
 });
 ```
 
-If the 'groupControls' contains a nested GroupControl a nested DynamicFormComponent will be rendered 
-inside the original DynamicFormComponent.
+If the `groupControls` property contains a nested `GroupControl` then a nested `DynamicFormComponent` will be rendered 
+inside the original `DynamicFormComponent`.
 
 The GroupControl has some very useful properties you can set:
 
 * `unrenderedControls`: This is a separate array of controls which is used to add controls that will be rendered manually
-(using for examplethe dynamic-form-control component explicitly)
+(using for example the dynamic-form-control component explicitly)
 
 * `groupValidators`: This is an array of ValidatorFn (validation functions) that will be added to the FormGroup level for cross-field validation.
 
@@ -130,9 +134,9 @@ The GroupControl has some very useful properties you can set:
 
 ## Unrendered controls
 
-Using the `unrenderedControls` property of the GroupControl we can create FormControls which are not rendered together with the rest of the `groupControls`.
+Using the `unrenderedControls` property of the `GroupControl` we can create FormControls which are not rendered together with the rest of the `groupControls`.
 This was initially added as a feature because we might want to give complete control to the user to where the control is rendered without reverting back
-to reactive forms. To render manually the control the DynamicFormControl component must be used:
+to reactive forms. To render manually the control the `DynamicFormControl` component must be used:
 
 ```ts
  <!--NOTE: this ui-g class is absolutely required so as to not break the grid layout!-->
@@ -169,9 +173,9 @@ But the controls will **NOT** be rendered.
 ### Rendering
 
 The rendering of the array is left to the user. To render for example a FormGroup which was created inside a FormArray, we must manually create a new 
-dynamic form and explicitly pass the FormGroup and the GroupControl. 
+dynamic form and explicitly pass the FormGroup and the `GroupControl`. 
 
-To add a new element in the array after it was created initially (dynamic addition of array elements), the DynamicFormService must be used. 
+To add a new element in the array after it was created initially (dynamic addition of array elements), the `DynamicFormService` must be used. 
 The `toFormGroup` function must be called with arguments the new FormGroup and the FormArray (so as to add the new FormGroup to its parent):
 
 ```typescript
@@ -216,13 +220,13 @@ validation error message:
 ]
 ```
 
-NOTE: This differentiation betwwen group/array validators and individual control validators might need to be addressed...
+NOTE: This differentiation between group/array validators and individual control validators might need to be addressed...
 
 ### Showing validation errors
 
-The GroupControl has two  properties concerning validation errors: 
+The `GroupControl` has two  properties concerning validation errors: 
 If `showErrors` is set to true the FormGroup errors of the specific dynamic form will be shown on top of the form.
-If `showNestedErrors` is set to true all the nested grop errors will also be shown at the top.
+If `showNestedErrors` is set to true all the nested group errors will also be shown at the top.
 
 The dynamic form control component is responsible for showing individual control components, by aggregating all field error messages in one
  and showing it bellow the field.
