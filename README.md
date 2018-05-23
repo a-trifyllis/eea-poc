@@ -1,4 +1,4 @@
-# Eea FQD PoC
+# EEA FQD Dataflow -- Proof of Concept
 
 This project was developed as an initial Proof of Concept, using the FQD Dataflow as a starting point, to study the possibility
 of migrating the new Web Form applications to a new web application framework. Angular 5(+) was chosen for this study.
