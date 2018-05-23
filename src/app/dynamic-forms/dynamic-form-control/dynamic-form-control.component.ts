@@ -3,7 +3,6 @@ import {FormGroup} from '@angular/forms';
 import {BaseControl, ControlType} from '../controls/base-control';
 import {FormError} from '../validation/form-error';
 
-
 @Component({
     selector: 'dynamic-form-control',
     templateUrl: './dynamic-form-control.component.html',
@@ -11,9 +10,9 @@ import {FormError} from '../validation/form-error';
 })
 export class DynamicFormControlComponent implements OnInit {
 
-    @Input() control: BaseControl<any>;
+    @Input() control: BaseControl;
 
-    @Input() form: FormGroup;
+    @Input() formGroup: FormGroup;
 
     @Input() controlErrors: FormError;
 
@@ -29,39 +28,46 @@ export class DynamicFormControlComponent implements OnInit {
     // https://stackoverflow.com/questions/42464367/angular2-use-enum-value-in-html-value-attribute/
     ControlType = ControlType;
 
+    constructor() {
+    }
+
     ngOnInit() {
         this.hostClasses = this.calculateHostClasses();
     }
 
+    isFieldRequired() {
+        return this.control.validators
+            .find(validator => validator.errorKey === 'required');
+    }
+
     /**
-     * For components that have filtering feature (like auto-complete).
+     * Retrieves control errors filtering out 'required' error which is handled separately
+     * @returns {ErrorTuple | undefined}
      */
+    hasErrors() {
+        return this.controlErrors.errors
+            .filter(error => error.errorKey !== 'required')
+            .find(error => error.errorKey !== '');
+    }
+
+    hasError(errorKey: string) {
+        return this.controlErrors.errors
+            .find(error => error.errorKey === errorKey);
+    }
+
+    /**
+     * Aggregates all error meesages for this control.
+     * @returns {string}
+     */
+    getErrorMessages() {
+        return this.controlErrors.errors
+            .map(error => error.errorMessage).join('<br>');
+    }
+
     filter($event) {
         if (this.control['filter']) {
             this.control['filter']($event);
         }
-    }
-
-    get isValid(): boolean {
-        return this.form.controls[this.control.key].valid;
-    }
-
-    hasErrors() {
-        return this.controlErrors.errors
-        .filter(error => error.errorName !== 'required')
-        .find(error => error.errorName !== '');
-    }
-
-    hasError(errorName: string) {
-        return this.controlErrors.errors.find(error => error.errorName === errorName);
-    }
-
-    getErrorMessages() {
-        return this.controlErrors.errors.map(error => error.errorMessage).join('<br>');
-    }
-
-    isFieldRequired() {
-        return this.control.validators.find(validator => validator.formError === 'required');
     }
 
     private calculateHostClasses() {
@@ -95,6 +101,5 @@ export class DynamicFormControlComponent implements OnInit {
         }
         return classes;
     }
+
 }
-
-

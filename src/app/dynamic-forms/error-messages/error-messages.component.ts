@@ -10,7 +10,7 @@ import {debounceTime} from 'rxjs/operators/debounceTime';
 })
 export class ErrorMessagesComponent implements OnInit {
 
-    @Input() relatedForm: FormGroup;
+    @Input() relatedFormGroup: FormGroup;
 
     @Input() showNestedErrors: boolean;
 
@@ -21,25 +21,20 @@ export class ErrorMessagesComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.relatedForm.valueChanges
+        this.relatedFormGroup.valueChanges
             .pipe(debounceTime(300))
             .subscribe(value => this.errorMessages = this.getErrorMessages());
+
+        this.errorMessages = this.getErrorMessages();
     }
 
     private getErrorMessages(): Message[] {
         const allErrors: Message[] = [];
         if (this.showNestedErrors) {
-            allErrors.push(...this.retrieveChildErrors([], this.relatedForm));
+            allErrors.push(...this.retrieveChildErrors([], this.relatedFormGroup));
         }
-        allErrors.push(...this.getErrors(this.relatedForm));
+        allErrors.push(...this.getErrors(this.relatedFormGroup));
         return allErrors;
-    }
-
-    private getErrors(form: FormGroup): Message[] {
-        if (form.errors) {
-            return Object.keys(form.errors)
-                .map(keyError => this.createErrorMessage(form, keyError));
-        }
     }
 
     private retrieveChildErrors(errors: Message[], formGroup: FormGroup): Message[] {
@@ -55,12 +50,18 @@ export class ErrorMessagesComponent implements OnInit {
         return errors;
     }
 
+    private getErrors(form: FormGroup): Message[] {
+        if (form.errors) {
+            return Object.keys(form.errors)
+                .map(keyError => this.createErrorMessage(form, keyError));
+        }
+    }
+
     private createErrorMessage(form: FormGroup, keyError): Message {
         return {
             severity: 'error',
-            summary: 'Validation for: '  + keyError + ' failed.',
+            summary: 'Validation for: ' + keyError + ' failed.',
             detail: 'Error Message: ' + form.errors[keyError]
         };
     }
-
 }

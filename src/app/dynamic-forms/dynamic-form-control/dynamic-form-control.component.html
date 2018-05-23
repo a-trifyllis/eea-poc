@@ -1,4 +1,4 @@
-<div *ngIf="control.controlType !== ControlType.GROUP" [formGroup]="form">
+<div [formGroup]="formGroup">
 
     <div [ngClass]="control.labelCssClasses">
         <label [attr.for]="control.key">{{control.label}}:</label>
@@ -7,33 +7,37 @@
     <div [ngSwitch]="control.controlType" [ngClass]="control.controlCssClasses">
 
         <!-- PRIME NG INPUT TEXT-->
-        <input *ngSwitchCase="ControlType.TEXT" pInputText type="text" [id]="control.key"
-               [formControlName]="control.key" [attr.disabled]="control.disabled()?'':null">
+        <input *ngSwitchCase="ControlType.TEXT" pInputText type="text"
+               [id]="control.key"
+               [formControlName]="control.key">
 
-        <input *ngSwitchCase="ControlType.NUMBER" pInputText type="number" [id]="control.key"
-               [formControlName]="control.key" [attr.disabled]="control.disabled()?'':null" min="0"
-               onkeydown="javascript: return event.keyCode > 69 ? false : true">
+        <input *ngSwitchCase="ControlType.NUMBER" pInputText
+               [id]="control.key"
+               [formControlName]="control.key"
+               min="0">
 
         <!-- PRIME NG AUTO COMPLETE-->
-        <p-autoComplete *ngSwitchCase="ControlType.AUTOCOMPLETE" [id]="control.key"
+        <p-autoComplete *ngSwitchCase="ControlType.AUTOCOMPLETE"
+                        [id]="control.key"
                         [suggestions]="control['suggestions']"
-                        (completeMethod)="filter($event)" [field]="control['suggestionField']"
-                        [dropdown]="true" [formControlName]="control.key" [forceSelection]="true"
-                        [attr.disabled]="control.disabled()?'':null">
+                        (completeMethod)="filter($event)"
+                        [field]="control['suggestionField']"
+                        [dropdown]="true"
+                        [formControlName]="control.key"
+                        [forceSelection]="true">
         </p-autoComplete>
 
         <!-- PRIME NG CALENDAR-->
-        <p-calendar *ngSwitchCase="ControlType.CALENDAR" [id]="control.key"
-         [formControlName]="control.key" [dateFormat]="control['dateFormat']" [showIcon]="control['dateFormat']">
+        <p-calendar *ngSwitchCase="ControlType.CALENDAR"
+                    [id]="control.key"
+                    [formControlName]="control.key"
+                    [dateFormat]="control['dateFormat']"
+                    [showIcon]="control['showIcon']">
         </p-calendar>
 
         <div *ngIf="controlErrors?.errors && hasErrors()" class="alert alert-danger" [innerHtml]="getErrorMessages()">
-               
-
         </div>
+
     </div>
 
 </div>
-
-<!--<div class="errorMessage" *ngIf="!isValid">{{control.label}} is required</div>-->
-

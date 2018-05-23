@@ -3,8 +3,10 @@ import {Contacts} from './fuel-contacts';
 import {HttpClient} from '@angular/common/http';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {FuelContactsService} from './fuel-conacts.service';
+import {GroupControl} from '../dynamic-forms/controls/group-control';
 import {BaseControl} from '../dynamic-forms/controls/base-control';
-import {TextboxControl} from '../dynamic-forms/controls/textbox-control';
+import {TextBoxControl} from '../dynamic-forms/controls/textbox-control';
+import {DynamicFormService} from '../dynamic-forms/dynamic-form/dynamic-form.service';
 
 @Component({
     selector: 'fuel-contacts',
@@ -17,24 +19,37 @@ export class FuelContactsComponent implements OnInit, AfterContentInit {
     @Input()
     contacts: Contacts;
 
-    @Input() parentForm: FormGroup;
+    @Input() parentFormGroup: FormGroup;
 
-    dynamicForm: FormGroup;
+    fuelContactsFormGroup: FormGroup;
 
-    controls: BaseControl<any>[];
+    controls: BaseControl[];
 
-    customControls: BaseControl<any>[] = [];
+    unrenderedControls: BaseControl[] = [];
 
-    generalSummary: BaseControl<string>;
+    generalSummary: BaseControl;
 
-    constructor(private http: HttpClient, private fb: FormBuilder, private fuelContactsService: FuelContactsService) {
-        this.createCustomControls();
+    fuelContactsGroupControl: GroupControl;
+
+    constructor(private http: HttpClient, private fb: FormBuilder, private fuelContactsService: FuelContactsService, private dynamicFormService: DynamicFormService) {
+        this.createUnrenderedControls();
     }
 
 
     ngOnInit() {
 
-        this.controls = this.fuelContactsService.getControls();
+        this.fuelContactsGroupControl = new GroupControl({
+            key: 'contacts',
+            groupControls: this.fuelContactsService.getControls(),
+            unrenderedControls: this.unrenderedControls,
+            showErrors: true,
+            showNestedFormGroupErrors: true,
+            controlsPerRow: 2
+
+        });
+
+        this.fuelContactsFormGroup = this.dynamicFormService.toFormGroup(this.fuelContactsGroupControl, this.parentFormGroup);
+
     }
 
     ngAfterContentInit(): void {
@@ -54,22 +69,15 @@ export class FuelContactsComponent implements OnInit, AfterContentInit {
         return form.value;
     }
 
-    /**
-     * Gets a reference to the dynamic form group (for example to manually add extra non-dynamic controls).
-     */
-    retrieveFormGroup(formGroup: FormGroup) {
-        this.dynamicForm = formGroup;
-    }
+    // create an unrendered control, which means this will not be rendered automatically, it must be set in the template
+    private createUnrenderedControls() {
 
-    // create a custom control, which means this will not be rendered automatically, it must be set in the template
-    private createCustomControls() {
-
-        this.generalSummary = new TextboxControl({
+        this.generalSummary = new TextBoxControl({
             key: 'generalSummary',
             label: 'General Summary'
         });
 
-        this.customControls.push(this.generalSummary);
+        this.unrenderedControls.push(this.generalSummary);
     }
 }
 

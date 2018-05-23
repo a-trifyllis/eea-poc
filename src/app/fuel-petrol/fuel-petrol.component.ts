@@ -2,15 +2,15 @@ import {AfterViewInit, ChangeDetectorRef, Component, Input, OnInit} from '@angul
 import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
 import {Petrol} from './petrol';
 
-import {ConfigService} from '../services/config.service';
-import {PetrolFormValidators} from '../validators/petrol-form-validators';
 import {ArrayControl} from '../dynamic-forms/controls/array-control';
 import {FuelPetrolService} from '../fuel-petrol/fuel-petrol.service';
-import {BaseControl} from '../dynamic-forms/controls/base-control';
 import {FuelPetrol} from '../fuel-data';
-import {FuelDataService} from '../services/fuel-data-service/fuel-data.service';
-import {GroupControl} from '../dynamic-forms/controls/group-controll';
+import {PetrolFormValidators} from './petrol-form-validators';
+import {FuelDataService} from '../fuel-data.service';
+import {ConfigService} from '../config.service';
 import {DynamicFormService} from '../dynamic-forms/dynamic-form/dynamic-form.service';
+import {GroupControl} from '../dynamic-forms/controls/group-control';
+import {Observable} from 'rxjs/Observable';
 
 
 @Component({
@@ -21,27 +21,25 @@ import {DynamicFormService} from '../dynamic-forms/dynamic-form/dynamic-form.ser
 
 export class FuelPetrolComponent implements OnInit, AfterViewInit {
 
-    // petrols: Petrol[];
-
-    @Input() parentForm: FormGroup;
+    @Input() parentFormGroup: FormGroup;
 
     @Input() fuelPetrol: FuelPetrol;
 
-    dynamicForm: FormGroup;
+    fuelPetrolGroupControl: GroupControl;
+
     petrolFormGroup: FormGroup;
 
-    controls: BaseControl<string>[];
-
     petrolFormValidator: PetrolFormValidators;
+
     cols: any[];
+
     reportResultTypes: any[];
+
     petrol: Petrol;
 
-    displayDialog: boolean;
     selectedPetrolIndex: number;
 
-    newPetrol: boolean;
-    petrolFormErrors: {};
+    private defaultEmptyPetrols: Petrol[];
 
     constructor(private petrolService: FuelDataService,
                 private configService: ConfigService,
@@ -49,14 +47,24 @@ export class FuelPetrolComponent implements OnInit, AfterViewInit {
                 private fuelPetrolService: FuelPetrolService,
                 private cd: ChangeDetectorRef,
                 private dynamicFormService: DynamicFormService) {
+
     }
 
     ngOnInit() {
         this.petrolFormValidator = new PetrolFormValidators(this.configService);
-        this.controls = this.fuelPetrolService.getControls();
-        this.getPetrols();
+
+        this.fuelPetrolGroupControl = this.fuelPetrolService.getGroupControl();
+
         this.getColumns();
-        this.getReportResultTypes();
+        this.getReportResultTypes()
+            .subscribe((data: any[]) => {
+                this.reportResultTypes = data['reportResultTypes'];
+
+                this.getPetrols();
+                this.petrolFormGroup = this.dynamicFormService.toFormGroup(this.fuelPetrolGroupControl, this.parentFormGroup);
+
+            });
+
     }
 
     // TODO check if there is a better way to avoid error ExpressionChangedAfterItHasBeenCheckedError (comment line to see the error)
@@ -67,19 +75,17 @@ export class FuelPetrolComponent implements OnInit, AfterViewInit {
     getColumns(): void {
         this.configService.getPetrolSettings().subscribe((data: any[]) => {
             this.cols = data['cols'];
+            this.defaultEmptyPetrols = data['defaultEmptyValues']['petrols'];
         });
     }
 
-    getReportResultTypes(): void {
-        this.configService.getPetrolSettings()
-            .subscribe((data: any[]) => {
-                this.reportResultTypes = data['reportResultTypes'];
-            });
+    getReportResultTypes(): Observable<any> {
+        return this.configService.getPetrolSettings();
     }
 
     getPetrols(): void {
         let index = 0;
-        const array = this.parentForm.get('petrols') as FormArray;
+        const array = this.parentFormGroup.get('petrols') as FormArray;
 
         this.fuelPetrol.petrols.forEach(pp => {
             pp.id = 'Petrol ' + pp.id;
@@ -90,136 +96,73 @@ export class FuelPetrolComponent implements OnInit, AfterViewInit {
 
     }
 
-    /**
-     * Gets a reference to the dynamic form group (for example to manually add extra non-dynamic controls).
-     */
-    retrieveFormGroup(formGroup: FormGroup) {
-        this.dynamicForm = formGroup;
-    }
-
-    retrievePetrolFormGroup(formGroup: FormGroup) {
-        this.petrolFormGroup = formGroup;
-    }
-
     createPetrolForm() {
-        const groupControl = this.fuelPetrolService.createPetrolGroupControl();
-        const petrolArray = (this.controls[0] as ArrayControl);
+        const groupControl = this.fuelPetrolService.createPetrolGroupControl(this.reportResultTypes);
+        const petrolArray = (this.fuelPetrolGroupControl.unrenderedControls[0] as ArrayControl);
         petrolArray.push(groupControl);
         this.selectedPetrolIndex = petrolArray.arrayControls.length - 1;
         return groupControl;
     }
 
-    showDialogToAdd() {
-        const petrolGroupControl = this.createPetrolForm();
-        const petrolsArray = this.petrolFormGroup.get('petrols') as FormArray;
-
-        this.newPetrol = true;
-        this.petrol = new Petrol();
-        this.petrol.id = 'Petrol';
-        this.displayDialog = true;
-        this.selectedPetrolIndex = (this.controls[0] as ArrayControl).arrayControls.length - 1;
-        this.petrolFormErrors = {};
-
-        // TODO Manually create form group of new array element using explicitly the DynamicFormService.
-        // We pass the controls to the customControls parameter because we want all nested FormGroups to be created immediately
-        this.dynamicFormService.toFormGroup(
-            [],
-            petrolGroupControl.groupControls,
-            petrolGroupControl.groupValidators,
-            null,
-            petrolsArray
-        );
+    getPetrolFormGroup(index: number) {
+        const petrolsFormArray = this.petrolFormGroup.controls.petrols as FormArray;
+        return petrolsFormArray.controls[index] as FormGroup;
     }
 
-
-    openFuelDialog(event) {
-        this.selectedPetrolIndex = event.index;
-        this.newPetrol = false;
-        this.petrol = event.data;
-        this.displayDialog = true;
+    getPetrolGroupControl(index: number) {
+        const arrayControl = (this.fuelPetrolGroupControl.unrenderedControls[0] as ArrayControl);
+        return arrayControl.arrayControls[index] as GroupControl;
     }
 
-    save() {
-        const transientPetrolForm = (this.petrolFormGroup.controls.petrols as FormArray).controls[this.selectedPetrolIndex];
-        if (transientPetrolForm.valid) {
-            const petrols = [...this.fuelPetrol.petrols];
-            this.petrol = transientPetrolForm.value;
+    getPetrolHeader(index: number) {
+        return (index + 1) % 3 !== 0 ? 'Petrol (' + (index + 1) + ')' : 'Petrol (' + (index - 1) + '+' + index + ')';
+    }
 
-            if (this.newPetrol) {
-                const counter = petrols !== undefined ? petrols.length + 1 : 0;
-                this.petrol.id = 'Petrol ' + counter;
-                petrols.push(this.petrol);
-            } else {
-                const num = this.selectedPetrolIndex + 1;
-                this.petrol.id = 'Petrol ' + num;
-                petrols[this.selectedPetrolIndex] = this.petrol;
-            }
-            this.fuelPetrol.petrols = petrols;
-            this.petrol = null;
-            this.displayDialog = false;
+    addPetrol() {
+        const petrolsArray = this.petrolFormGroup.controls.petrols as FormArray;
+        const startIndex = this.fuelPetrol.petrols.length;
+
+        for (let i = 0; i < 3; i++) {
+            const newPetrol = Object.assign({}, this.defaultEmptyPetrols[i], {id: 'Petrol ' + (startIndex + i + 1)});
+            this.fuelPetrol.petrols = [...this.fuelPetrol.petrols, newPetrol];
+            const petrolGroupControl = this.createPetrolForm();
+            // Manually create form group of new array element using explicitly the DynamicFormService.
+            // We pass the controls to the unrenderedControls parameter because we want all nested FormGroups to be created immediately
+            this.dynamicFormService.toFormGroup(
+                new GroupControl({
+                    key: 'petrol ' + i,
+                    unrenderedControls: petrolGroupControl.groupControls,
+                    groupValidators: petrolGroupControl.groupValidators
+                }),
+                petrolsArray
+            );
         }
     }
 
-    delete() {
-        this.fuelPetrol.petrols = this.fuelPetrol.petrols.filter((val, i) => i !== this.selectedPetrolIndex);
-        this.petrol = null;
-        this.displayDialog = false;
-
+    handleRemovePetrol($event) {
+        const petrolIndex = $event.index;
+        this.fuelPetrol.petrols.splice(petrolIndex - 2, 3);
         // TODO : the following removals should be implemented into a service
         const array = (this.petrolFormGroup.controls.petrols) as FormArray;
-        array.removeAt(this.selectedPetrolIndex);
-
-        const petrolArray = (this.controls[0] as ArrayControl);
-        petrolArray.removeAt(this.selectedPetrolIndex);
-        this.selectedPetrolIndex = undefined;
+        array.controls.splice(petrolIndex - 2, 3);
+        const petrolArray = (this.fuelPetrolGroupControl.unrenderedControls[0]as ArrayControl);
+        petrolArray.arrayControls.splice(petrolIndex - 2, 3);
     }
 
-    close() {
-        this.displayDialog = false;
-        if (this.newPetrol) {
-            // TODO : the following removals should be implemented into a service
-            const array = (this.petrolFormGroup.controls.petrols) as FormArray;
-            array.removeAt(this.selectedPetrolIndex);
-
-            const petrolArray = (this.controls[0] as ArrayControl);
-            petrolArray.removeAt(this.selectedPetrolIndex);
-            this.selectedPetrolIndex = undefined;
-        }
+    isTabClosable(tabIndex: number) {
+        return this.isFullYearTab(tabIndex) && !this.isFirstFullYearTab(tabIndex);
     }
 
-    getBasicPetrolInfoControls() {
-        const arrayControl = (this.controls[0] as ArrayControl);
-        const petrolGroupControl = arrayControl.arrayControls[this.selectedPetrolIndex] as GroupControl;
-        const basicPetrolInfoGroupControl = petrolGroupControl.groupControls
-            .find(control => control.key === 'basicPetrolInfo') as GroupControl;
-        return basicPetrolInfoGroupControl.groupControls;
+    private isFirstFullYearTab(tabIndex: number) {
+        return tabIndex === 2;
     }
 
-    getBasicPetrolInfoFormGroup() {
-        const petrolsFormArray = this.petrolFormGroup.controls.petrols as FormArray;
-        const petrolFormGroup = petrolsFormArray.controls[this.selectedPetrolIndex] as FormGroup;
-        return petrolFormGroup.get('basicPetrolInfo');
+    private isFullYearTab(tabIndex: number) {
+        return (tabIndex + 1) % 3 === 0;
     }
 
-    getBasicPetrolInfoValue() {
-        const currentPetrol = this.fuelPetrol.petrols[this.selectedPetrolIndex];
-        if (currentPetrol) {
-            return currentPetrol.basicPetrolInfo;
-        }
-    }
-
-    getReportingResultsControls() {
-        const arrayControl = (this.controls[0] as ArrayControl);
-        const petrolGroupControl = arrayControl.arrayControls[this.selectedPetrolIndex] as GroupControl;
-        return petrolGroupControl.groupControls;
-    }
-
-    getSamplingFrequencyControls() {
-        const arrayControl = (this.controls[0] as ArrayControl);
-        const petrolGroupControl = arrayControl.arrayControls[this.selectedPetrolIndex] as GroupControl;
-        const sampleFrequencyGroupControl = petrolGroupControl.groupControls
-            .find(control => control.key === 'sampleFrequency') as GroupControl;
-        return sampleFrequencyGroupControl.groupControls;
+    isPetrolLimitReached() {
+        return this.fuelPetrol.petrols.length >= 15;
     }
 }
 

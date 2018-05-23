@@ -1,11 +1,10 @@
-import { AfterViewInit, ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { FuelData, FuelPetrol } from './fuel-data';
-import { parse } from 'js2xmlparser';
-import { AbstractControl, FormGroup, ValidatorFn } from '@angular/forms';
-import { TextboxControl } from './dynamic-forms/controls/textbox-control';
-import { BaseControl } from './dynamic-forms/controls/base-control';
-import { GroupControl } from './dynamic-forms/controls/group-controll';
-import { FuelDataService } from './services/fuel-data-service/fuel-data.service';
+import {AfterViewInit, ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {FuelData} from './fuel-data';
+import {parse} from 'js2xmlparser';
+import {AbstractControl, FormGroup, ValidatorFn} from '@angular/forms';
+import {FuelDataService} from './fuel-data.service';
+import {DynamicFormService} from './dynamic-forms/dynamic-form/dynamic-form.service';
+import {GroupControl} from './dynamic-forms/controls/group-control';
 
 
 @Component({
@@ -18,30 +17,38 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     fuelData: FuelData;
 
-    parentForm: FormGroup;
+    parentFormGroup: FormGroup;
 
-    parentControls: BaseControl<any>[] = [];
+    parentGroupControl: GroupControl;
 
     topValidators: ValidatorFn[];
 
-    controls: BaseControl<any>[];
-
     fuelDataXml() {
         if (this.fuelData !== undefined) {
-            return parse('fuel-data', this.fuelData, { format: { pretty: true } });
+            return parse('fuel-data', this.fuelData, {format: {pretty: true}});
         }
     }
 
-    constructor(private cd: ChangeDetectorRef, private petrolService: FuelDataService) {
+    constructor(private dynamicFormService: DynamicFormService, private cd: ChangeDetectorRef, private petrolService: FuelDataService) {
 
         this.topValidators = [testCrossFormGroupValidator()];
-    }
 
-    ngOnInit() {
         this.petrolService.getFuelData()
             .subscribe((fuelData: FuelData) => {
                 this.fuelData = fuelData;
             });
+
+        this.parentGroupControl = new GroupControl({
+            key: 'parentForm',
+            showErrors: true,
+            showNestedFormGroupErrors: true,
+            groupValidators: this.topValidators
+        });
+        this.parentFormGroup = this.dynamicFormService.toFormGroup(this.parentGroupControl);
+    }
+
+    ngOnInit() {
+
     }
 
     // TODO check if there is a better way to avoid error ExpressionChangedAfterItHasBeenCheckedError (comment line to see the error)
@@ -49,11 +56,9 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.cd.detectChanges();
     }
 
-    /**
-     * Gets a reference to the dynamic form group (for example to manually add extra non-dynamic controls).
-     */
-    retrieveFormGroup(formGroup: FormGroup) {
-        this.parentForm = formGroup;
+    submit() {
+        this.fuelData = this.parentFormGroup.getRawValue();
+        alert('Nothing here yet!');
     }
 
 }
@@ -66,7 +71,7 @@ export function testCrossFormGroupValidator(): ValidatorFn {
         if (fuelData.nestedFormValidation && fuelData.contacts) {
             return fuelData.nestedFormValidation.testField1 === fuelData.contacts.organisationResponsibleForReport
                 ? null
-                : { 'crossFormGroupError1': 'Test Error' };
+                : {'crossFormGroupError1': 'Test Error'};
         }
         return null;
     };
