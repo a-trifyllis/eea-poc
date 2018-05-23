@@ -35,7 +35,7 @@ export class GroupingService {
             // then reset the temporary group array
             tempGroup = [];
         } else if (this.isTempGroupFull(tempGroup, controlsPerRow)) {
-            // we created new group...
+            // we create new group...
             groupedControls.push(tempGroup);
             // ... but also start a new temp group, in case control[0] was the last of the controls
             tempGroup = [controls[0]];

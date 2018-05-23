@@ -1,19 +1,14 @@
-export interface FormError {
+export interface ControlErrorRegistry {
     controlKey: string;
-    errors: ErrorTuple[];
+    errors: ValidationError[];
 }
 
-export interface ErrorTuple {
+export interface ValidationError {
     errorKey: string;
     errorMessage: string;
 }
 
 export interface ValidationErrorMessage {
     controlKey: string;
-    validationTuple: ErrorTuple[];
-}
-
-export interface ValidationTuple {
-    errorName: string;
-    validationMessage: string;
+    errors: ValidationError[];
 }

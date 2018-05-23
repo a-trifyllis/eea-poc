@@ -35,7 +35,7 @@
                     [showIcon]="control['showIcon']">
         </p-calendar>
 
-        <div *ngIf="controlErrors?.errors && hasErrors()" class="alert alert-danger" [innerHtml]="getErrorMessages()">
+        <div *ngIf="controlErrors && hasErrors()" class="alert alert-danger" [innerHtml]="getErrorMessages()">
         </div>
 
     </div>

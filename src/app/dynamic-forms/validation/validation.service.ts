@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {AbstractControl, FormArray, FormGroup} from '@angular/forms';
-import {ErrorTuple, FormError, ValidationErrorMessage} from './form-error';
+import {ValidationError, ControlErrorRegistry, ValidationErrorMessage} from './form-error';
 import {BaseControl} from '..//controls/base-control';
 
 export const defaultValidationMessages = {
@@ -25,7 +25,7 @@ export class ValidationService {
      *
      * This is the object were the error messages will be stored, per control and per error type (key) when validation is performed
      */
-    generateFormErrorStructure(control: BaseControl): ErrorTuple[] {
+    generateFormErrorStructure(control: BaseControl): ValidationError[] {
         return control.validators.map(validator => {
             return {
                 errorKey: validator.errorKey,
@@ -47,7 +47,7 @@ export class ValidationService {
      *
      * This object is used to select which validation messages will be shown for a specific control
      */
-    generateValidationMessages(control: BaseControl): ErrorTuple[] {
+    generateValidationMessages(control: BaseControl): ValidationError[] {
         return control.validators.map(validator => {
             return {
                 errorKey: validator.errorKey,
@@ -66,11 +66,11 @@ export class ValidationService {
      * @param validationMessages
      * @returns {any[]}
      */
-    updateFormErrors(form: FormGroup, formErrors: FormError[], validationMessages: ValidationErrorMessage[]): FormError[] {
+    updateFormErrors(form: FormGroup, formErrors: ControlErrorRegistry[], validationMessages: ValidationErrorMessage[]): ControlErrorRegistry[] {
         formErrors.map(formError => formError.controlKey)
             .map(field => {
                 const fieldFormErrors = this.clearPreviousErrors(formErrors, field);
-                const fieldMessages = validationMessages.find(v => v.controlKey === field).validationTuple;
+                const fieldMessages = validationMessages.find(v => v.controlKey === field).errors;
                 const control = form.get(field);
 
                 if (this.isControlInvalid(control)) {
@@ -87,7 +87,7 @@ export class ValidationService {
         return !!key.validationMessage ? key.validationMessage : defaultValidationMessages[key.errorKey];
     }
 
-    private clearPreviousErrors(formErrors: FormError[], field) {
+    private clearPreviousErrors(formErrors: ControlErrorRegistry[], field) {
         const fieldFormErrors = formErrors.find(error => error.controlKey === field);
         fieldFormErrors.errors = [];
         return fieldFormErrors;

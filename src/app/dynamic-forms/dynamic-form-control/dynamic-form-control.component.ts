@@ -1,7 +1,7 @@
 import {Component, HostBinding, Input, OnInit} from '@angular/core';
 import {FormGroup} from '@angular/forms';
 import {BaseControl, ControlType} from '../controls/base-control';
-import {FormError} from '../validation/form-error';
+import {ControlErrorRegistry, ValidationError} from '../validation/form-error';
 
 @Component({
     selector: 'dynamic-form-control',
@@ -14,7 +14,7 @@ export class DynamicFormControlComponent implements OnInit {
 
     @Input() formGroup: FormGroup;
 
-    @Input() controlErrors: FormError;
+    @Input() controlErrors: ValidationError[];
 
     @Input() labelCssClasses: string[];
 
@@ -36,32 +36,31 @@ export class DynamicFormControlComponent implements OnInit {
     }
 
     isFieldRequired() {
-        return this.control.validators
-            .find(validator => validator.errorKey === 'required');
+        return this.control.validators.find(validator => validator.errorKey === 'required');
     }
 
     /**
      * Retrieves control errors filtering out 'required' error which is handled separately
-     * @returns {ErrorTuple | undefined}
+     * @returns {ValidationError | undefined}
      */
     hasErrors() {
-        return this.controlErrors.errors
+        return this.controlErrors
             .filter(error => error.errorKey !== 'required')
             .find(error => error.errorKey !== '');
     }
 
     hasError(errorKey: string) {
-        return this.controlErrors.errors
-            .find(error => error.errorKey === errorKey);
+        return this.controlErrors.find(error => error.errorKey === errorKey);
     }
 
     /**
-     * Aggregates all error meesages for this control.
+     * Aggregates all error messages for this control.
      * @returns {string}
      */
     getErrorMessages() {
-        return this.controlErrors.errors
-            .map(error => error.errorMessage).join('<br>');
+        return this.controlErrors
+            .map(error => error.errorMessage)
+            .join('<br>');
     }
 
     filter($event) {

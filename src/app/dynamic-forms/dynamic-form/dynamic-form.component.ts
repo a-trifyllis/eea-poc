@@ -4,7 +4,7 @@ import {GroupControl} from '../controls/group-control';
 import {BaseControl, ControlType} from '../controls/base-control';
 import {GroupingService} from '../grouping.service';
 import {debounceTime} from 'rxjs/operators/debounceTime';
-import {FormError, ValidationErrorMessage} from '../validation/form-error';
+import {ControlErrorRegistry, ValidationErrorMessage} from '../validation/form-error';
 import {ValidationService} from '../validation/validation.service';
 
 @Component({
@@ -42,7 +42,7 @@ export class DynamicFormComponent implements OnInit {
      * The errors (if any) for the specific FormGroup.
      * @type {any[]}
      */
-    formErrors: FormError[] = [];
+    formErrors: ControlErrorRegistry[] = [];
 
     /**
      * All the validation messages for each possible error for the specific FormGroup.
@@ -73,7 +73,7 @@ export class DynamicFormComponent implements OnInit {
     }
 
     getControlErrors(key: string) {
-        return this.formErrors.find(error => error.controlKey === key);
+        return this.formErrors.find(error => error.controlKey === key).errors;
     }
 
     private initValidation() {
@@ -85,7 +85,7 @@ export class DynamicFormComponent implements OnInit {
                 });
                 this.validationMessages.push({
                     controlKey: control.key,
-                    validationTuple: this.validationService.generateValidationMessages(control)
+                    errors: this.validationService.generateValidationMessages(control)
                 });
             });
     }

@@ -134,7 +134,7 @@ describe('ValidationService', () => {
             }],
             [{
                 controlKey: 'testTextBox1',
-                validationTuple: validationMessages
+                errors: validationMessages
             }]);
 
         expect(formErrors).toEqual([{
