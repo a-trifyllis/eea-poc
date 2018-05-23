@@ -18,29 +18,35 @@ of migrating the new Web Form applications to a new web application framework. A
 
 The following are some reasons for choosing Angular 5 as a web framework
 
+### Maintainability/Reusability
+
+Angular addresses maintainability mainly with the use of Typescript. Typescript, in contrast to Javascript, is a strongly-typed language 
+which helps developers to prevent bugs and mistakes early in the development process (before runtime). While small JavaScript projects 
+don’t require such enhancement, the enterprise-scale applications challenge developers to make their code cleaner 
+and verify its quality more often.
+Using Typescript also promotes concrete data structures and, as a result, promotes object-oriented design & best practices. 
+Finally, TypeScript has better navigation, autocompletion, and refactoring services.
+
+Furthermore, the component-oriented architecture promoted by Angular is also a step towards more modular and reusable code.
+
+All of the above help towards a maintainable code-base.
+
 ### Familiarity
 
-Angular 5 syntax and architecture is different from AngularJS (used in most(?) of the previous Web Forms) but many fundamental concepts
-remain the same. Especially if a developer has worked with AngularJS 1.5 (or above) using Typescript. This means that the transition 
-from AngularJS to Angular 5 is smoother for the developer than to a completely different framework.
-Also (and this is very important in our case) Typescript is much more familiar to back-end developers (for example Java developers)
-with an Object Oriented Programming background.
+In Angular 5 many fundamental concepts are the same as in AngularJS (the framework used in most of the previous Web Forms). 
+The overall syntax might have changed, but if the developers are experienced in AngularJS (especially with version 1.5+ with Typescript) 
+the transition to Angular 5 is smoother than to a completely different framework.
+Also Typescript is much more familiar to back-end developers (for example Java developers) with an Object Oriented Programming background.
+This is a very important point in our case, since most of the developers in the team are Java developers.
 
-### Maintainability
-
-Angular addresses maintainability mainly with the use of Typescript. Typescript is a strongly-typed language (which Javascript is not), 
-which allows developers to find bugs and mistakes earlier in the development process (before runtime). 
-TypeScript also allows developers that are new to a codebase to more quickly get up to speed due to their ability 
-to more quickly see the types of data moving through the application.
-The component-oriented architecture promoted bu Angular is also a step towards more modular (and thus more maintainable) code.
 
 ### Angular CLI
 
-Using the build-in CLI code generation tool makes the process of setting up a new project completely trivial. 
+Using the build-in CLI code generation tool makes the process of setting up a new project relatively trivial. 
 The project is generated automatically using the CLI which relieves the developer from various time-consuming tasks including 
 configuring a new project, configuring a build tool, creating a build process etc. 
-During development using the CLI the developer can quickly generate new components, services etc avoiding the repetitive boiler-plate
-code that must be written for such tasks.
+During development using the CLI the developer can quickly generate new components, services, modules etc avoiding the repetitive 
+and boiler-plate code that is needed for these tasks.
 
 ### Popularity/Active community
 
@@ -58,21 +64,27 @@ the development process
 
 ### Reactive Forms and Validation on the Form Data Model
 
-Two crucial decision that were made at the begining of the project were:
-a) to user reactive forms and
-b) to conduct all validations on the level of the Form Model.
-c) keep the Data Model exactly the same as the Form Model (as much as possible)
+Some  crucial decisions that were made at the beginning of the project were:
 
-Concerning a) One of benefits of the reactive forms is that create and manipulate form control objects directly in the component class. 
+1. Usage of [reactive forms](https://angular.io/guide/reactive-forms).
+2. Conduct validations on the level of the Form Model only.
+3. Keep the Data Model as much as possible the same as the Form Model .
+
+Concerning 1): The reactive forms technique is the preferred way to implement non-static  Web Forms in Angular. The alternative
+which is the template-driven forms are only recommended for very simple and static Web forms.
+
+One of benefits of the reactive forms is that create and manipulate form control objects directly in the component class. 
 As the component class has immediate access to both the data model and the form control structure, 
 you can push data model values into the form controls and pull user-changed values back out. 
 The component can observe changes in form control state and react to those changes. 
 This gives a lot of control to the developer and at the same time makes the code more testable.
 
-Concerning b) what was achieved was to use Angular validation infrastructure (built-in Validators, custom Validators, 
-form state/validation lifecycle management etc) without having to develop a mechanism to validate Data Model
+Furthermore, validations are decoupled from the HTML template, and cross-field and cross-form validations are easier to implement.
 
-Concerning c) the aim was to avoid having to transform the Data Model to Form Model back and forth.
+Concerning 2): What was achieved was to make exclusive use of Angular validation infrastructure (built-in Validators, custom Validators, 
+form state/validation lifecycle management etc) without having to develop a mechanism to validate the Data Model.
+
+Concerning 3): The aim was to avoid having to implement transformations between the Data Model and the Form Model.
 
 ### Dynamic forms/Validation infrastructure
 
