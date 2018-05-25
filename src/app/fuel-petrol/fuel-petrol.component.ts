@@ -1,256 +1,169 @@
-import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, FormControl, Validators, ValidatorFn, FormArray, Validator } from '@angular/forms';
-import { Petrol, ReportResult } from './petrol';
-import { identifierModuleUrl } from '@angular/compiler';
-import { PetrolService } from '../services/fuel-petrol-service/petrol.service';
-import { ConfigService } from '../services/config.service';
-import { isNull, isNullOrUndefined, isUndefined } from 'util';
-import { Observable } from 'rxjs/Observable';
-import { PetrolFormValidators } from '../validators/petrol-form-validators';
+import {AfterViewInit, ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
+import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
+import {Petrol} from './petrol';
+
+import {ArrayControl} from '../dynamic-forms/controls/array-control';
+import {FuelPetrolService} from '../fuel-petrol/fuel-petrol.service';
+import {FuelPetrol} from '../fuel-data';
+import {PetrolFormValidators} from './petrol-form-validators';
+import {FuelDataService} from '../fuel-data.service';
+import {ConfigService} from '../config.service';
+import {DynamicFormService} from '../dynamic-forms/dynamic-form/dynamic-form.service';
+import {GroupControl} from '../dynamic-forms/controls/group-control';
+import {Observable} from 'rxjs/Observable';
+
 
 @Component({
-  selector: 'fuel-petrol',
-  templateUrl: './fuel-petrol.component.html',
-  styleUrls: ['./fuel-petrol.component.css']
+    selector: 'fuel-petrol',
+    templateUrl: './fuel-petrol.component.html',
+    styleUrls: ['./fuel-petrol.component.css']
 })
 
-export class FuelPetrolComponent implements OnInit {
+export class FuelPetrolComponent implements OnInit, AfterViewInit {
 
-  parentForm: FormGroup;
-  petrolForm: FormGroup;
+    @Input() parentFormGroup: FormGroup;
 
-  petrolFormValidator: PetrolFormValidators;
+    @Input() fuelPetrol: FuelPetrol;
 
-  cols: any[];
-  reportResultTypes: any[];
-  petrol: Petrol;
+    fuelPetrolGroupControl: GroupControl;
 
-  displayDialog: boolean;
-  selectedPetrolIndex: number;
+    petrolFormGroup: FormGroup;
 
-  newPetrol: boolean;
-  petrols: Petrol[];
+    petrolFormValidator: PetrolFormValidators;
 
-  petrolFormErrors: {};
+    cols: any[];
 
-  constructor(private petrolService: PetrolService,
-    private configService: ConfigService,
-    private fb: FormBuilder) { }
+    reportResultTypes: any[];
 
-  ngOnInit() {
-    this.petrolFormValidator = new PetrolFormValidators(this.configService);
+    petrol: Petrol;
 
-    this.parentForm = this.fb.group({
-      'petrols': this.fb.array([])
-    }, {
-        validators: []
-      });
+    selectedPetrolIndex: number;
 
-    this.getPetrols();
-    this.getColumns();
-    this.getReportResultTypes();
-  }
+    private defaultEmptyPetrols: Petrol[];
 
-  getColumns(): void {
-    this.configService.getPetrolSettings().subscribe((data: any[]) => {
-      this.cols = data["cols"];
-    });
-  }
+    constructor(private petrolService: FuelDataService,
+                private configService: ConfigService,
+                private fb: FormBuilder,
+                private fuelPetrolService: FuelPetrolService,
+                private cd: ChangeDetectorRef,
+                private dynamicFormService: DynamicFormService) {
 
-  getReportResultTypes(): void {
-    this.configService.getPetrolSettings()
-      .subscribe((data: any[]) => {
-        this.reportResultTypes = data["reportResultTypes"]
-      })
-  }
+    }
 
-  createPetrolForm() {
-    this.petrolForm = this.fb.group({ // <-- the parent FormGroup
-      id: "Petrol",
-      country: ['', Validators.required],
-      reportingYear: ['', Validators.required],
-      period: ['', Validators.required],
-      parentFuelGrade: ['', Validators.required],
-      nationalFuelGrade: '',
-      summerPeriodNorA: '',
-      maximumBioethanolContent: 0,
-      researchOctaneNumber: this.fb.group(
-        this.getReportResultGroup("--"),
-        {
-          validator: this.petrolFormValidator.minMaxValidation()
+    ngOnInit() {
+        this.petrolFormValidator = new PetrolFormValidators(this.configService);
+
+        this.fuelPetrolGroupControl = this.fuelPetrolService.getGroupControl();
+
+        this.getColumns();
+        this.getReportResultTypes()
+            .subscribe((data: any[]) => {
+                this.reportResultTypes = data['reportResultTypes'];
+
+                this.getPetrols();
+                this.petrolFormGroup = this.dynamicFormService.toFormGroup(this.fuelPetrolGroupControl, this.parentFormGroup);
+
+            });
+
+    }
+
+    // TODO check if there is a better way to avoid error ExpressionChangedAfterItHasBeenCheckedError (comment line to see the error)
+    ngAfterViewInit() {
+        this.cd.detectChanges();
+    }
+
+    getColumns(): void {
+        this.configService.getPetrolSettings().subscribe((data: any[]) => {
+            this.cols = data['cols'];
+            this.defaultEmptyPetrols = data['defaultEmptyValues']['petrols'];
+        });
+    }
+
+    getReportResultTypes(): Observable<any> {
+        return this.configService.getPetrolSettings();
+    }
+
+    getPetrols(): void {
+        let index = 0;
+        const array = this.parentFormGroup.get('petrols') as FormArray;
+
+        this.fuelPetrol.petrols.forEach(pp => {
+            pp.id = 'Petrol ' + pp.id;
+            this.createPetrolForm();
+            // this.bindDataToForm(pp, index);
+            index++;
+        });
+
+    }
+
+    createPetrolForm() {
+        const groupControl = this.fuelPetrolService.createPetrolGroupControl(this.reportResultTypes);
+        const petrolArray = (this.fuelPetrolGroupControl.unrenderedControls[0] as ArrayControl);
+        petrolArray.push(groupControl);
+        this.selectedPetrolIndex = petrolArray.arrayControls.length - 1;
+        return groupControl;
+    }
+
+    getPetrolFormGroup(index: number) {
+        const petrolsFormArray = this.petrolFormGroup.controls.petrols as FormArray;
+        return petrolsFormArray.controls[index] as FormGroup;
+    }
+
+    getPetrolGroupControl(index: number) {
+        const arrayControl = (this.fuelPetrolGroupControl.unrenderedControls[0] as ArrayControl);
+        return arrayControl.arrayControls[index] as GroupControl;
+    }
+
+    getPetrolHeader(index: number) {
+        return (index + 1) % 3 !== 0 ? 'Petrol (' + (index + 1) + ')' : 'Petrol (' + (index - 1) + '+' + index + ')';
+    }
+
+    addPetrol() {
+        const petrolsArray = this.petrolFormGroup.controls.petrols as FormArray;
+        const startIndex = this.fuelPetrol.petrols.length;
+
+        for (let i = 0; i < 3; i++) {
+            const newPetrol = Object.assign({}, this.defaultEmptyPetrols[i], {id: 'Petrol ' + (startIndex + i + 1)});
+            this.fuelPetrol.petrols = [...this.fuelPetrol.petrols, newPetrol];
+            const petrolGroupControl = this.createPetrolForm();
+            // Manually create form group of new array element using explicitly the DynamicFormService.
+            // We pass the controls to the unrenderedControls parameter because we want all nested FormGroups to be created immediately
+            this.dynamicFormService.toFormGroup(
+                new GroupControl({
+                    key: 'petrol ' + i,
+                    unrenderedControls: petrolGroupControl.groupControls,
+                    groupValidators: petrolGroupControl.groupValidators
+                }),
+                petrolsArray
+            );
         }
-      ),
-      motorOctanenumber: this.fb.group(
-        this.getReportResultGroup("--")
-      ),
-      vapourPressure: this.fb.group(
-        this.getReportResultGroup("kPa")
-      ),
-      distillationEvaporated100: this.fb.group(
-        this.getReportResultGroup("% V/V")
-      ),
-      distillationEvaporated150: this.fb.group(
-        this.getReportResultGroup("% V/V")
-      ),
-      sampleFrequency: this.fb.group({
-        value: [0, Validators.required]
-      })
-    },
-      {
-        validator: Validators.compose([this.petrolFormValidator.formGroupValidationFunction(),
-        this.petrolFormValidator.uniqueCountry()])
-      }
-    );
-
-    this.petrolForm.valueChanges.subscribe((form) => {
-      this.onChanges(form);
-    });
-
-
-    let array = this.parentForm.get('petrols') as FormArray;
-    array.push(this.petrolForm);
-    this.selectedPetrolIndex = array.length - 1;
-  }
-
-  getReportResultGroup(u: string) {
-    return {
-      unit: new FormControl({ value: u, disabled: true }),
-      numOfSamples: [null, Validators.required],
-      min: null,
-      max: null,
-      median: null,
-      standardDeviation: null,
-      toleranceLimit: null,
-      sampleValue: null,
-      nationalMin: null,
-      nationalMax: null,
-      directiveMin: null,
-      directiveMax: null,
-      method: "",
-      date: ""
-    };
-  }
-
-  getPetrols(): void {
-    let array = this.parentForm.get('petrols') as FormArray;
-    this.petrolService.getPetrols()
-      .subscribe((p: Petrol[]) => {
-        p.forEach(pp => {
-          pp.id = "Petrol " + pp.id;
-          this.createPetrolForm();
-          this.bindDataToForm(pp);
-        })
-        this.petrols = p;
-      });
-  }
-
-  showDialogToAdd() {
-    this.newPetrol = true;
-    this.petrol = new Petrol();
-    this.displayDialog = true;
-    this.selectedPetrolIndex = undefined;
-    this.createPetrolForm();
-  }
-
-  save() {
-    let petrolF = (this.parentForm.get('petrols') as FormArray).controls[this.selectedPetrolIndex];
-    if (petrolF.valid) {
-      let petrols = [...this.petrols];
-      let counter = petrols != undefined ? petrols.length + 1 : 0;
-      petrolF.get('id').setValue("Petrol " + counter);
-      this.petrol = this.prepareSavePetrol(petrolF);
-
-      if (this.newPetrol) {
-        petrols.push(this.petrol);
-      }
-      else {
-        petrols[this.selectedPetrolIndex] = this.petrol;
-      }
-      this.petrols = petrols;
-      this.petrol = null;
-      this.displayDialog = false;
-    }
-  }
-
-  delete() {
-    this.petrols = this.petrols.filter((val, i) => i != this.selectedPetrolIndex);
-    this.petrol = null;
-    this.displayDialog = false;
-    let array = this.parentForm.get('petrols') as FormArray;
-    array.removeAt(this.selectedPetrolIndex);
-  }
-
-  close() {
-    this.displayDialog = false;
-    let array = this.parentForm.get('petrols') as FormArray;
-    if (this.newPetrol) {
-      array.removeAt(this.selectedPetrolIndex);
-    }
-  }
-
-  prepareSavePetrol(petrolF: AbstractControl): Petrol {
-    const formModel = petrolF.value;
-    return formModel;
-  }
-
-  onRowSelect(event) {
-    this.selectedPetrolIndex = event.index;
-    this.newPetrol = false;
-    this.petrol = this.clonePetrol(event.data);
-    this.displayDialog = true;
-    this.bindDataToForm(this.petrol);
-  }
-
-  clonePetrol(p: Petrol): Petrol {
-    let petrol = new Petrol();
-    for (let prop in p) {
-      petrol[prop] = p[prop];
-    }
-    return petrol;
-  }
-
-  bindDataToForm(p: Petrol) {
-    let array = this.parentForm.get('petrols') as FormArray;
-    array.controls[this.selectedPetrolIndex].patchValue(p);
-  }
-
-
-  onChanges(form: AbstractControl) {
-    let hasErrors = false;
-    let selectedPetrolForm = (this.parentForm.get('petrols') as FormArray).controls[this.selectedPetrolIndex];
-
-    if (selectedPetrolForm) {
-      if (selectedPetrolForm.errors) {
-        hasErrors = true;
-        this.petrolFormErrors = selectedPetrolForm.errors;
-      }
-
-      if (this.reportResultTypes) {
-        this.reportResultTypes.forEach(r => {
-          if (selectedPetrolForm.errors && selectedPetrolForm.errors[r.field]) {
-            hasErrors = true;
-            this.petrolFormErrors['invalidNumberofSample'] = selectedPetrolForm.errors[r.field].invalidNumberofSample;
-            this.petrolFormErrors['tabField'] = r.header;
-          }
-        })
-      }
-
-      Object.keys((selectedPetrolForm as FormArray).controls).forEach(key => {
-        if (selectedPetrolForm.get(key).errors) {
-          hasErrors = true;
-          this.petrolFormErrors[key] = selectedPetrolForm.get(key).errors;
-        }
-      });
-
     }
 
-    if (!hasErrors) { this.petrolFormErrors = {}; };
+    handleRemovePetrol($event) {
+        const petrolIndex = $event.index;
+        this.fuelPetrol.petrols.splice(petrolIndex - 2, 3);
+        // TODO : the following removals should be implemented into a service
+        const array = (this.petrolFormGroup.controls.petrols) as FormArray;
+        array.controls.splice(petrolIndex - 2, 3);
+        const petrolArray = (this.fuelPetrolGroupControl.unrenderedControls[0]as ArrayControl);
+        petrolArray.arrayControls.splice(petrolIndex - 2, 3);
+    }
 
-    console.log(this.petrolFormErrors);
+    isTabClosable(tabIndex: number) {
+        return this.isFullYearTab(tabIndex) && !this.isFirstFullYearTab(tabIndex);
+    }
 
-    return null;
-  }
+    private isFirstFullYearTab(tabIndex: number) {
+        return tabIndex === 2;
+    }
 
+    private isFullYearTab(tabIndex: number) {
+        return (tabIndex + 1) % 3 === 0;
+    }
+
+    isPetrolLimitReached() {
+        return this.fuelPetrol.petrols.length >= 15;
+    }
 }
 
 

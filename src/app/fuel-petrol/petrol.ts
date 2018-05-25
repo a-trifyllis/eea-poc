@@ -1,18 +1,34 @@
 export class Petrol {
     id: string;
-    country: string;
-    reportingYear: number;
-    period: string;
-    parentFuelGrade: string;
-    nationalFuelGrade: string;
-    summerPeriodNorA: string;
-    maximumBioethanolContent: string;
+    basicPetrolInfo: {
+        country: string;
+        reportingYear: number;
+        period: string;
+        parentFuelGrade: string;
+        nationalFuelGrade: string;
+        summerPeriodNorA: string;
+        maximumBioethanolContent: string;
+    };
     researchOctaneNumber: ReportResult;
-    motorOctanenumber: ReportResult;
+    motorOctaneNumber: ReportResult;
     vapourPressure: ReportResult;
     distillationEvaporated100: ReportResult;
     distillationEvaporated150: ReportResult;
-    sampleFrequency:MonthSample
+    hydrocarbonOlefins: ReportResult;
+    hydrocarbonAromatics: ReportResult;
+    hydrocarbonBenzene: ReportResult;
+    oxygenContent: ReportResult;
+    oxygenContent2: ReportResult;
+    methanol: ReportResult;
+    ethanol: ReportResult;
+    isoPropylAlcohol: ReportResult;
+    tertButylAlcohol: ReportResult;
+    isoButylAlcohol: ReportResult;
+    ethers: ReportResult;
+    sulphurContent: ReportResult;
+    leadContent: ReportResult;
+    magnanese: ReportResult;
+    sampleFrequency: MonthSample;
 }
 
 export class ReportResult {
@@ -21,9 +37,11 @@ export class ReportResult {
     min: number;
     max: number;
     median: number;
+    mean: number;
     standardDeviation: number;
     toleranceLimit: number;
-    sampleValue: number;
+    sampleValue25: number;
+    sampleValue75: number;
     nationalMin: number;
     nationalMax: number;
     directiveMin: number;
@@ -34,7 +52,7 @@ export class ReportResult {
 
 export class MonthSample {
     // month: MonthEnum;
-    value: number;
+    totalMonthValue: number;
 }
 
 // export enum MonthEnum {
