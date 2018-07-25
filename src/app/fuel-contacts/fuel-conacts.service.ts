@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 
 import {AbstractControl, ValidatorFn, Validators} from '@angular/forms';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {Country} from './country';
 import {HttpClient} from '@angular/common/http';
 import {BaseControl} from '../dynamic-forms/controls/base-control';

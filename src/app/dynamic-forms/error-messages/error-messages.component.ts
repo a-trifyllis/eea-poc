@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Message} from 'primeng/api';
 import {FormGroup} from '@angular/forms';
-import {debounceTime} from 'rxjs/operators/debounceTime';
+import {debounceTime} from 'rxjs/operators';
 
 @Component({
     selector: 'error-messages',

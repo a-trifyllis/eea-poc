@@ -10,7 +10,7 @@ import {FuelDataService} from '../fuel-data.service';
 import {ConfigService} from '../config.service';
 import {DynamicFormService} from '../dynamic-forms/dynamic-form/dynamic-form.service';
 import {GroupControl} from '../dynamic-forms/controls/group-control';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 
 
 @Component({

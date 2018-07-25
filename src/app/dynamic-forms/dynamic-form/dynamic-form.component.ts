@@ -3,7 +3,7 @@ import {FormGroup} from '@angular/forms';
 import {GroupControl} from '../controls/group-control';
 import {BaseControl, ControlType} from '../controls/base-control';
 import {GroupingService} from '../grouping.service';
-import {debounceTime} from 'rxjs/operators/debounceTime';
+import {debounceTime} from 'rxjs/operators';
 import {FormError, ValidationErrorMessage} from '../validation/form-error';
 import {ValidationService} from '../validation/validation.service';
 

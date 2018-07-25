@@ -4,7 +4,7 @@
     <div class="ui-g-2">
         <button type="button" pButton
                 [label]="!renderHot ? 'Edit all rows' : 'Edit done'"
-                [icon]="!renderHot ? 'fa-pencil' : 'fa-check'"
+                [icon]="!renderHot ? 'fa fa-pencil' : 'fa fa-check'"
                 (click)="toggleEditAllRows()"
                 [ngClass]="!renderHot ? '' : 'ui-button-success'">
 
@@ -83,9 +83,9 @@
     <p-footer>
         <div class="ui-g">
             <div class="ui-g-12">
-                <button type="button" pButton label="Save" icon="fa-check"
+                <button type="button" pButton label="Save" icon="fa fa-check"
                         (click)="save(selectedReportingResult)"></button>
-                <button type="button" pButton label="Close" icon="fa-times" (click)="close()"
+                <button type="button" pButton label="Close" icon="fa fa-times" (click)="close()"
                         class="ui-button-secondary"></button>
             </div>
         </div>
