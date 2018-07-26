@@ -1,17 +1,21 @@
 import {Injectable} from '@angular/core';
 
 
-import {ArrayControl} from '../dynamic-forms/controls/array-control';
-import {TextBoxControl} from '../dynamic-forms/controls/textbox-control';
-import {GroupControl} from '../dynamic-forms/controls/group-control';
-import {BaseControl} from '../dynamic-forms/controls/base-control';
+
 import {Validators} from '@angular/forms';
 
-import {AutocompleteControl} from '../dynamic-forms/controls/autocomplete-control';
-import {NumberControl} from '../dynamic-forms/controls/number-control';
+
 import {PetrolFormValidators} from './petrol-form-validators';
 import {ConfigService} from '../config.service';
 import {ReportingResultType} from './reporting-results/reporting-result-type';
+import {
+    ArrayControl,
+    AutocompleteControl,
+    BaseControl,
+    GroupControl,
+    NumberControl,
+    TextBoxControl
+} from 'atrif-dynamic-forms';
 
 @Injectable()
 export class FuelPetrolService {

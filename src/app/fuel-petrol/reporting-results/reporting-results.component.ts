@@ -1,6 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {BaseControl} from '../../dynamic-forms/controls/base-control';
-import {GroupControl} from '../../dynamic-forms/controls/group-control';
+
 import {FormGroup, ValidatorFn} from '@angular/forms';
 
 import {ReportingResultType} from './reporting-result-type';
@@ -9,6 +8,7 @@ import {PetrolFormValidators} from '../petrol-form-validators';
 import {ConfigService} from '../../config.service';
 import * as Handsontable from 'handsontable';
 import {ReportingResultsService} from './reporting-results.service';
+import {BaseControl, GroupControl} from 'atrif-dynamic-forms';
 
 @Component({
     selector: 'reporting-results',

@@ -22,6 +22,7 @@
     "@angular/platform-browser-dynamic": "^6.0.9",
     "@angular/router": "^6.0.9",
     "@handsontable/angular": "^2.0.0",
+    "atrif-dynamic-forms": "file:../../ANGULAR/dynamic-forms-app/dist/dynamic-forms/atrif-dynamic-forms-0.0.6.tgz",
     "classlist.js": "^1.1.20150312",
     "core-js": "^2.4.1",
     "font-awesome": "^4.7.0",

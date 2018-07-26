@@ -3,10 +3,8 @@ import {Contacts} from './fuel-contacts';
 import {HttpClient} from '@angular/common/http';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {FuelContactsService} from './fuel-conacts.service';
-import {GroupControl} from '../dynamic-forms/controls/group-control';
-import {BaseControl} from '../dynamic-forms/controls/base-control';
-import {TextBoxControl} from '../dynamic-forms/controls/textbox-control';
-import {DynamicFormService} from '../dynamic-forms/dynamic-form/dynamic-form.service';
+import {BaseControl, DynamicFormService, GroupControl, TextBoxControl} from 'atrif-dynamic-forms';
+
 
 @Component({
     selector: 'fuel-contacts',
@@ -31,7 +29,8 @@ export class FuelContactsComponent implements OnInit, AfterContentInit {
 
     fuelContactsGroupControl: GroupControl;
 
-    constructor(private http: HttpClient, private fb: FormBuilder, private fuelContactsService: FuelContactsService, private dynamicFormService: DynamicFormService) {
+    constructor(private http: HttpClient, private fb: FormBuilder, private fuelContactsService: FuelContactsService,
+                private dynamicFormService: DynamicFormService) {
         this.createUnrenderedControls();
     }
 

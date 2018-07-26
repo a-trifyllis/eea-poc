@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {FormGroup} from '@angular/forms';
-import {GroupControl} from '../../dynamic-forms/controls/group-control';
+import {GroupControl} from 'atrif-dynamic-forms';
 
 @Component({
     selector: 'fuel-petrol-tab',

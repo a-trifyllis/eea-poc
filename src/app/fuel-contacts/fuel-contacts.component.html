@@ -1,6 +1,6 @@
 <p-card title="Contact & Summary" styleClass="ui-fluid" [formGroup]="parentFormGroup">
 
-    <dynamic-form [groupControl]="fuelContactsGroupControl" [formGroup]="fuelContactsFormGroup" [value]="contacts">
+    <df-dynamic-form [groupControl]="fuelContactsGroupControl" [formGroup]="fuelContactsFormGroup" [value]="contacts">
 
         <div form-header>
             <h4>
@@ -70,10 +70,10 @@
         <!--NOTE: this ui-g class is absolutely required so as to not break the grid layout!-->
         <div class="ui-g">
 
-            <dynamic-form-control [formGroup]="fuelContactsFormGroup" [control]="generalSummary">
-            </dynamic-form-control>
+            <df-dynamic-form-control [formGroup]="fuelContactsFormGroup" [control]="generalSummary">
+            </df-dynamic-form-control>
         </div>
 
-    </dynamic-form>
+    </df-dynamic-form>
 
 </p-card>

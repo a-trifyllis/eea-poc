@@ -1,6 +1,6 @@
 <p-card title="Petrol" styleClass="ui-fluid" [formGroup]="parentFormGroup">
 
-    <dynamic-form *ngIf="petrolFormGroup" [groupControl]="fuelPetrolGroupControl" [formGroup]="petrolFormGroup"
+    <df-dynamic-form *ngIf="petrolFormGroup" [groupControl]="fuelPetrolGroupControl" [formGroup]="petrolFormGroup"
                   [value]="fuelPetrol">
 
         <div class="ui-g">
@@ -35,5 +35,5 @@
 
         </p-tabView>
 
-    </dynamic-form>
+    </df-dynamic-form>
 </p-card>

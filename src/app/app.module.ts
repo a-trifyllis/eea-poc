@@ -30,7 +30,8 @@ import {ConfigService} from './config.service';
 import {HotTableModule} from '@handsontable/angular';
 import {ReportingResultsService} from './fuel-petrol/reporting-results/reporting-results.service';
 import {EditableTableComponent} from './editable-table/editable-table.component';
-import {DynamicFormsModule} from './dynamic-forms/dynamic-forms.module';
+import {DynamicFormsModule} from 'atrif-dynamic-forms';
+
 
 @NgModule({
     declarations: [

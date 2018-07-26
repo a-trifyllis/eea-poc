@@ -3,8 +3,7 @@ import {FuelData} from './fuel-data';
 import {parse} from 'js2xmlparser';
 import {AbstractControl, FormGroup, ValidatorFn} from '@angular/forms';
 import {FuelDataService} from './fuel-data.service';
-import {DynamicFormService} from './dynamic-forms/dynamic-form/dynamic-form.service';
-import {GroupControl} from './dynamic-forms/controls/group-control';
+import {DynamicFormService, GroupControl} from 'atrif-dynamic-forms';
 
 
 @Component({

@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {GroupControl} from '../../dynamic-forms/controls/group-control';
+import {GroupControl} from 'atrif-dynamic-forms';
 
 @Component({
     selector: 'sample-frequency',

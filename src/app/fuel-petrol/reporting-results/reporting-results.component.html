@@ -70,9 +70,9 @@
         {{selectedReportingResultHeader}}
     </p-header>
 
-    <error-messages [relatedFormGroup]="group">
+    <df-error-messages [relatedFormGroup]="group">
 
-    </error-messages>
+    </df-error-messages>
 
     <reporting-result [groupControl]="filteredGroupControl(selectedReportingResult)"
                       [group]="group.get(selectedReportingResult)"

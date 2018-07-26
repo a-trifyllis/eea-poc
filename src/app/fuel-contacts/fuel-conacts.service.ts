@@ -4,11 +4,8 @@ import {AbstractControl, ValidatorFn, Validators} from '@angular/forms';
 import {Observable} from 'rxjs';
 import {Country} from './country';
 import {HttpClient} from '@angular/common/http';
-import {BaseControl} from '../dynamic-forms/controls/base-control';
-import {AutocompleteControl} from '../dynamic-forms/controls/autocomplete-control';
-import {CalendarControl} from '../dynamic-forms/controls/calendar-control';
-import {GroupControl} from '../dynamic-forms/controls/group-control';
-import {TextBoxControl} from '../dynamic-forms/controls/textbox-control';
+import {AutocompleteControl, BaseControl, CalendarControl, GroupControl, TextBoxControl} from 'atrif-dynamic-forms';
+
 
 
 @Injectable()
